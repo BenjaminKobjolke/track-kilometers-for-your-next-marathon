@@ -1,0 +1,211 @@
+/* Theme styles */
+[data-theme="dark"] {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .card {
+    background-color: #2d2d2d;
+    border-color: #404040;
+}
+
+[data-theme="dark"] .card-title {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .card-text {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .card-subtext {
+    color: #9e9e9e;
+}
+
+[data-theme="dark"] .table {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .table th {
+    background-color: #2d2d2d;
+    border-color: #404040;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .table td {
+    border-color: #404040;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .table tr:hover td {
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+    background-color: #262626;
+    border-color: #404040;
+}
+
+[data-theme="dark"] .form-control {
+    background-color: #333;
+    border-color: #404040;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .form-control:focus {
+    background-color: #404040;
+    border-color: #505050;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .form-label {
+    color: #e0e0e0;
+}
+
+/* Card styles */
+.card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-title {
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.card-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+    margin-left: 1rem;
+    white-space: nowrap;
+}
+
+.card-subtext {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.card-title {
+    margin-bottom: 0.25rem;
+}
+
+.card-info {
+    margin-right: auto;
+    max-width: 60%;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* Table styles */
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table th:first-child,
+.table td:first-child {
+    width: 25%;  /* Date column */
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 55%;  /* Kilometers column */
+}
+
+.table th:last-child,
+.table td:last-child {
+    width: 20%;  /* Actions column */
+    white-space: nowrap;  /* Keep buttons on one line */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .table-responsive {
+        margin-top: 2rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        word-break: break-word;
+        margin-bottom: 0;
+    }
+
+    .card-text {
+        font-size: 2.2rem;
+        margin-left: 0.5rem;
+    }
+
+    .card-info {
+        max-width: 50%;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+}
+
+/* Modal styles */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Button styles */
+.btn-group .btn + .btn {
+    margin-left: 4px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}

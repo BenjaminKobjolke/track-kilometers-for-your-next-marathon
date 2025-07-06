@@ -1,0 +1,118 @@
+<?php
+require_once __DIR__ . '/../bootstrap.php';
+
+use App\Models\User;
+
+// Check for token
+$token = $_GET['token'] ?? null;
+echo 'wtf';
+die;
+if (!$token) {
+    header('Location: login.php?error=' . urlencode('No token provided'));
+    exit;
+}
+
+// Find user by reset token
+$user = User::where('reset_token', $token)->first();
+
+// Validate token
+if (!$user || !$user->isResetTokenValid()) {
+    header('Location: login.php?error=' . urlencode('Invalid or expired token'));
+    exit;
+}
+
+// Log token for debugging
+error_log('Reset token: ' . $token);
+error_log('User found: ' . ($user ? 'yes' : 'no'));
+echo 'hi';
+die;
+if ($user) {
+    error_log('Token valid: ' . ($user->isResetTokenValid() ? 'yes' : 'no'));
+}
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Marathon Training Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Reset Password</h2>
+                        <form id="resetForm">
+                            <input type="hidden" id="resetToken" value="<?= htmlspecialchars($token) ?>">
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Reset Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const token = document.getElementById('resetToken').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                const requestData = {
+                    token,
+                    password: newPassword
+                };
+                console.log('Submitting data:', requestData);
+                
+                const response = await fetch('/track-kilometers-for-your-next-marathon/public/api/auth/update-password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+                
+                const data = JSON.parse(responseText);
+                console.log('Parsed response:', data);
+                
+                if (data.success) {
+                    alert('Password has been reset successfully');
+                    window.location.href = 'login.php';
+                } else {
+                    alert(data.message || 'Failed to reset password');
+                }
+            } catch (error) {
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                alert('Error resetting password: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

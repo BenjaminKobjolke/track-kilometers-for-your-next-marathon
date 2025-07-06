@@ -1,0 +1,16 @@
+{
+  "name": "benjaminkobjolke/track-kilometers-for-your-next-marathon",
+  "description": "A web application to track kilometers for marathon training",
+  "type": "project",
+  "require": {
+    "php": "^8.1",
+    "illuminate/database": "^10.0",
+    "vlucas/phpdotenv": "^5.5",
+    "phpmailer/phpmailer": "^6.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}
