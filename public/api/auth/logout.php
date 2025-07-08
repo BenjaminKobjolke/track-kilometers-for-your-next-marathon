@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 
-use App\Models\User;
-use App\Utils\Logger;
+use Models\User;
+use Models\Logger;
 
 $logger = new Logger('auth');
 

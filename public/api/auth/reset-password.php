@@ -3,9 +3,12 @@
 require_once __DIR__ . '/../../../bootstrap.php';
 $config = require_once __DIR__ . '/../../../config.php';
 
-use App\Models\User;
+use Models\User;
+use Models\Logger;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+$logger = new Logger('auth');
 
 header('Content-Type: application/json');
 
@@ -50,11 +53,20 @@ try {
 
     $mail->send();
     
+    $logger->info('Password reset link sent', [
+        'email' => $user->email,
+        'token_expires' => $user->reset_token_expires_at
+    ]);
+    
     echo json_encode([
         'success' => true,
         'message' => 'Password reset link has been sent to your email'
     ]);
 } catch (Exception $e) {
+    $logger->error('Password reset failed', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+    ]);
     http_response_code(400);
     echo json_encode([
         'success' => false,

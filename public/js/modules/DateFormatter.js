@@ -31,4 +31,31 @@ export class DateFormatter {
         }
         return true;
     }
+
+    static isoToGermanDate(isoDate) {
+        if (!isoDate) return '';
+        
+        // Remove any timezone info
+        const cleanDate = isoDate.split('T')[0];
+        const [year, month, day] = cleanDate.split('-');
+        if (!year || !month || !day) return '';
+        
+        return `${day}.${month}.${year}`;
+    }
+
+    static formatDateForDisplay(date) {
+        if (!date) return '';
+        if (typeof date === 'string') {
+            // Remove any timezone info
+            const cleanDate = date.split('T')[0];
+            const [year, month, day] = cleanDate.split('-');
+            if (!year || !month || !day) return '';
+            return `${day}.${month}.${year}`;
+        }
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
 }

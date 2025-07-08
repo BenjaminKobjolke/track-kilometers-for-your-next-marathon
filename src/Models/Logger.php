@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace Models;
 
 class Logger {
     private $logFile;

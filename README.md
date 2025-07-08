@@ -1,4 +1,4 @@
-# Marathon Training Tracker
+# Training Tracker
 
 A web application to track your running progress and monitor your marathon training goals.
 
@@ -69,7 +69,7 @@ composer install
        'base_url' => '/track-kilometers-for-your-next-marathon/public',  // Update this for your environment
        'email' => [
            'from_address' => 'your-email@domain.com',  // Email address for password reset emails
-           'from_name' => 'Marathon Training Tracker'   // Name shown in emails
+           'from_name' => 'Training Tracker'   // Name shown in emails
        ]
    ];
    ```
@@ -85,6 +85,8 @@ composer install
 1. Start webserver
 
 2. Open your browser and navigate the root URL of the application, e.g. `http://localhost/track-kilometers-for-your-next-marathon`.
+
+3. The first login will create with the email and password you provide. You can then log in with these credentials in the future.
 
 ## Features
 

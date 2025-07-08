@@ -1,119 +1,52 @@
 # Active Context
 
-## Current Work Focus
+## Current Focus
 
-1. Base URL Configuration
-
-   - Created config.php for environment settings
-   - Added baseUrl configuration
-   - Updated all JavaScript and PHP paths
-   - Fixed password reset email links
-
-2. Authentication System
-
-   - Login/logout functionality
-   - Password reset system
-   - Remember me feature
-   - Session management
-
-3. Error Logging
-   - Custom Logger class
-   - Separate log files per type
-   - Detailed error context
-   - File permission handling
+- Implementing session management system
+- Improving mobile responsiveness
+- Enhancing UI/UX for statistics display
 
 ## Recent Changes
 
-1. Configuration Updates
+### Session Management
 
-   ```php
-   // config.php
-   return [
-       'base_url' => '/track-kilometers-for-your-next-marathon/public',
-       'email' => [
-           'from_address' => 'marathon-tracker@your-server.com',
-           'from_name' => 'Marathon Training Tracker'
-       ]
-   ];
-   ```
+- Added session creation and management
+- Added past sessions view
+- Added session completion functionality
+- Added session switching capability
+- Added session stats calculation
 
-2. JavaScript Updates
+### UI Improvements
 
-   ```javascript
-   // Using baseUrl in fetch calls
-   fetch(`${window.appConfig.baseUrl}/api/auth/login.php`);
-   window.location.href = `${window.appConfig.baseUrl}/login.php`;
-   ```
+- Added probability info modal
+- Added hover effects for probability card
+- Fixed mobile layout for action buttons
+- Improved table responsiveness
+- Added proper spacing and sizing for mobile
 
-3. PHP Updates
-   ```php
-   // Using config in reset emails
-   $resetLink = 'http://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
-   $mail->setFrom($config['email']['from_address'], $config['email']['from_name']);
-   ```
+### Code Organization
+
+- Split app.js into modules:
+  - StatsManager
+  - ModalManager
+  - UIManager
+  - PastSessionsManager
+  - SessionManager
+  - RunManager
+- Improved event handling
+- Added proper dependency injection
+- Fixed circular dependencies
 
 ## Active Decisions
 
-1. Configuration Management
-
-   - Single config.php file
-   - Environment-specific settings
-   - Passed to JavaScript via window.appConfig
-   - Used consistently across all paths
-
-2. Error Handling
-
-   - Custom Logger class
-   - File-based logging
-   - Detailed context in logs
-   - Separate log files by type
-
-3. Path Structure
-   - Base URL in config
-   - Consistent usage in JavaScript
-   - Consistent usage in PHP
-   - Email link generation
-
-## Important Patterns
-
-1. Configuration Usage
-
-   - Load in PHP: require_once config.php
-   - Pass to JS: window.appConfig
-   - Use in fetch calls
-   - Use in redirects
-
-2. Error Logging
-
-   - Create log directory
-   - Set permissions
-   - Log with context
-   - Handle file errors
-
-3. Path Management
-   - Config-based paths
-   - Consistent structure
-   - Environment flexibility
-   - Email compatibility
+- Using weighted probability calculation (30% current progress, 70% estimated progress)
+- Using class-based selectors instead of nth-child for better maintainability
+- Using responsive design breakpoints at 991.98px and 375px
+- Using proper event cleanup to prevent memory leaks
 
 ## Project Insights
 
-1. Configuration
-
-   - Single source of truth
-   - Easy environment changes
-   - Consistent usage pattern
-   - Flexible deployment
-
-2. Error Handling
-
-   - Detailed logging
-   - Easy debugging
-   - File management
-   - Permission handling
-
-3. Path Structure
-   - Environment agnostic
-   - Easy to maintain
-   - Consistent format
-   - Email compatibility
+- Mobile-first design is crucial for usability
+- Clear separation of concerns improves maintainability
+- Proper event handling prevents duplicate listeners
+- Weighted calculations provide better user motivation

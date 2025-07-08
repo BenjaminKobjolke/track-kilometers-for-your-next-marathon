@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../bootstrap.php';
 $config = require_once __DIR__ . '/../config.php';
 
-use App\Models\User;
+use Models\User;
 
 // Check if user is already logged in
 session_start();

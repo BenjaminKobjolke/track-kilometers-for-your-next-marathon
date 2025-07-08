@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Run extends Model
 {
     protected $table = 'runs';
-    protected $fillable = ['date', 'kilometers'];
+    protected $fillable = ['date', 'kilometers', 'session_id'];
 
     // Disable Laravel's default timestamps
     public $timestamps = false;
@@ -30,9 +30,20 @@ class Run extends Model
      * @param string $endDate
      * @return float
      */
-    public static function calculateAverageKilometers(string $startDate, string $endDate): float
+    public function session()
     {
-        $runs = self::whereBetween('date', [$startDate, $endDate])->get();
+        return $this->belongsTo(Session::class);
+    }
+
+    public static function calculateAverageKilometers(string $startDate, string $endDate, ?int $sessionId = null): float
+    {
+        $query = self::whereBetween('date', [$startDate, $endDate]);
+        
+        if ($sessionId !== null) {
+            $query->where('session_id', $sessionId);
+        }
+        
+        $runs = $query->get();
         $totalKilometers = $runs->sum('kilometers');
         $daysDifference = ceil((strtotime($endDate) - strtotime($startDate)) / (60 * 60 * 24)) + 1;
         

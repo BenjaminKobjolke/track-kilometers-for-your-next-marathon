@@ -1,13 +1,15 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
 
-use App\Models\User;
+use Models\User;
+use Models\Logger;
+
+$logger = new Logger('auth');
 
 // Check for token
 $token = $_GET['token'] ?? null;
-echo 'wtf';
-die;
 if (!$token) {
+    $logger->error('Password reset attempted without token');
     header('Location: login.php?error=' . urlencode('No token provided'));
     exit;
 }
@@ -17,18 +19,16 @@ $user = User::where('reset_token', $token)->first();
 
 // Validate token
 if (!$user || !$user->isResetTokenValid()) {
+    $logger->error('Invalid or expired reset token used', [
+        'token' => $token,
+        'user_found' => (bool)$user,
+        'token_valid' => $user ? $user->isResetTokenValid() : false
+    ]);
     header('Location: login.php?error=' . urlencode('Invalid or expired token'));
     exit;
 }
 
-// Log token for debugging
-error_log('Reset token: ' . $token);
-error_log('User found: ' . ($user ? 'yes' : 'no'));
-echo 'hi';
-die;
-if ($user) {
-    error_log('Token valid: ' . ($user->isResetTokenValid() ? 'yes' : 'no'));
-}
+$logger->info('Valid reset token used', ['email' => $user->email]);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -83,9 +83,8 @@ if ($user) {
                     token,
                     password: newPassword
                 };
-                console.log('Submitting data:', requestData);
                 
-                const response = await fetch('/track-kilometers-for-your-next-marathon/public/api/auth/update-password.php', {
+                const response = await fetch('api/auth/update-password.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -93,11 +92,7 @@ if ($user) {
                     body: JSON.stringify(requestData)
                 });
 
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-                
-                const data = JSON.parse(responseText);
-                console.log('Parsed response:', data);
+                const data = await response.json();
                 
                 if (data.success) {
                     alert('Password has been reset successfully');
@@ -106,11 +101,8 @@ if ($user) {
                     alert(data.message || 'Failed to reset password');
                 }
             } catch (error) {
-                console.error('Error details:', {
-                    message: error.message,
-                    stack: error.stack
-                });
-                alert('Error resetting password: ' + error.message);
+                console.error('Error resetting password:', error);
+                alert('Error resetting password');
             }
         });
     </script>

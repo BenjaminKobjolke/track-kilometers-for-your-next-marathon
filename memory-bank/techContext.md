@@ -1,141 +1,167 @@
 # Technical Context
 
-## Technologies Used
+## Frontend Architecture
 
-1. Frontend
+### JavaScript Modules
 
-   - HTML5/CSS3
-   - JavaScript (ES6+)
-   - Bootstrap 5
-   - Fetch API
+- Modular design with ES6 modules
+- Each module has a specific responsibility
+- Clear dependency management
+- Event-driven architecture
 
-2. Backend
+### Module Structure
 
-   - PHP 8+
-   - SQLite
-   - Eloquent ORM
-   - PHPMailer
+```
+public/js/modules/
+├── AuthManager.js      # Authentication handling
+├── DateFormatter.js    # Date formatting utilities
+├── ModalManager.js     # Modal dialog management
+├── PastSessionsManager.js # Past sessions handling
+├── RunManager.js       # Run entry management
+├── SessionManager.js   # Session state management
+├── SettingsManager.js  # User settings management
+├── StatsManager.js     # Statistics calculations
+└── UIManager.js        # UI updates and rendering
+```
 
-3. Development Tools
-   - Composer for PHP dependencies
-   - Git for version control
-   - VSCode editor
-   - PHP-CS-Fixer for formatting
+### CSS Organization
 
-## Development Setup
+- Mobile-first responsive design
+- Semantic class naming
+- Dark mode support via data-attributes
+- Responsive breakpoints:
 
-1. Prerequisites
+  ```css
+  /* Mobile styles */
+  @media (max-width: 991.98px) {
+    /* Tablet and smaller */
+  }
 
-   - PHP 8+ installed
-   - Composer installed
-   - Web server (Apache/Nginx)
-   - SQLite support enabled
+  /* Small mobile styles */
+  @media (max-width: 375px) {
+    /* Small phones */
+  }
+  ```
 
-2. Installation Steps
+## Data Management
 
-   ```bash
-   # Install PHP dependencies
-   composer install
+### Session Management
 
-   # Create SQLite database
-   touch database/database.sqlite
-   chmod 777 database/database.sqlite
+- Active session tracking
+- Session state persistence
+- Session switching
+- Session completion
+- Past sessions view
 
-   # Run migrations
-   php database/migrate.php
-   ```
+### Statistics Calculation
 
-3. Configuration
-   ```php
-   // config.php
-   return [
-       'base_url' => '/track-kilometers-for-your-next-marathon/public',
-       'email' => [
-           'from_address' => 'marathon-tracker@your-server.com',
-           'from_name' => 'Marathon Training Tracker'
-       ]
-   ];
-   ```
+- Daily average based on days since start
+- Estimated total based on current average
+- Target probability calculation:
+  ```javascript
+  // Base probability on estimated progress, weighted by current progress
+  const currentWeight = 0.3; // 30% weight
+  const estimatedWeight = 0.7; // 70% weight
+  probability =
+    currentProgress * currentWeight + estimatedProgress * estimatedWeight;
+  ```
 
-## Technical Constraints
+## UI Components
 
-1. Database
+### Cards
 
-   - SQLite for portability
-   - File permissions (777)
-   - Foreign key constraints
-   - Index optimizations
+- Consistent styling
+- Interactive elements (probability card)
+- Responsive layout
+- Dark mode support
 
-2. Authentication
+### Tables
 
-   - Session-based auth
-   - Token-based reset
-   - Remember me cookies
-   - CSRF protection
+- Responsive design
+- Mobile-optimized buttons
+- Proper spacing
+- Action column management:
+  ```css
+  .actions-cell {
+    white-space: nowrap;
+    min-width: 160px;
+  }
+  ```
 
-3. Email
-   - PHP mail() function
-   - HTML email support
-   - Token expiration
-   - Error handling
+### Modals
 
-## Dependencies
+- Bootstrap modal integration
+- Dynamic content loading
+- Proper cleanup
+- Event handling
 
-1. PHP Packages
+## Event Management
 
-   ```json
-   {
-     "illuminate/database": "^8.0",
-     "phpmailer/phpmailer": "^6.0"
-   }
-   ```
+### Event Binding
 
-2. Frontend Libraries
+```javascript
+class Manager {
+  constructor() {
+    this.boundEventHandlers = new Map();
+    this.bindEvents();
+  }
 
-   ```html
-   <link href="bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-   <script src="bootstrap@5.3.0/js/bootstrap.bundle.min.js"></script>
-   ```
+  bindEvents() {
+    const handler = () => this.handleEvent();
+    this.boundEventHandlers.set("event", handler);
+    element.addEventListener("event", handler);
+  }
 
-3. Development Tools
-   - PHP-CS-Fixer
-   - Git
-   - Composer
-   - VSCode
+  removeEventListeners() {
+    if (this.boundEventHandlers.has("event")) {
+      element.removeEventListener(
+        "event",
+        this.boundEventHandlers.get("event")
+      );
+    }
+    this.boundEventHandlers.clear();
+  }
+}
+```
 
-## Tool Usage Patterns
+## API Integration
 
-1. Database Operations
+### Endpoints
 
-   ```php
-   // Using Eloquent ORM
-   $runs = Run::orderBy('date', 'desc')->get();
-   $settings = Settings::getDefault();
-   ```
+- /api/runs.php
+- /api/sessions.php
+- /api/settings.php
+- /api/sessions/active.php
+- /api/sessions/complete.php
+- /api/sessions/current.php
 
-2. API Endpoints
+### Data Flow
 
-   ```php
-   // RESTful pattern
-   header('Content-Type: application/json');
-   echo json_encode(['success' => true]);
-   ```
+1. User interaction
+2. API request
+3. Response processing
+4. UI update
+5. Stats recalculation
+6. Event rebinding
 
-3. Frontend Modules
+## Development Tools
 
-   ```javascript
-   // ES6 modules
-   import { RunManager } from "./modules/RunManager.js";
-   import { SettingsManager } from "./modules/SettingsManager.js";
-   ```
+### Build Process
 
-4. Configuration Usage
+- No build step required
+- Direct ES6 module usage
+- Browser-native features
 
-   ```javascript
-   // JavaScript
-   fetch(`${window.appConfig.baseUrl}/api/auth/login.php`);
+### Dependencies
 
-   // PHP
-   $config = require_once __DIR__ . '/config.php';
-   $resetLink = 'http://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
-   ```
+- Bootstrap 5.3.0
+- Native JavaScript
+- PHP Backend
+- MySQL Database
+
+## Browser Support
+
+- Modern browsers with ES6 support
+- Mobile browser optimization
+- Touch event support
+- Responsive design support

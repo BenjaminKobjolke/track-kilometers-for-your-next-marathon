@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 
-use App\Models\User;
+use Models\User;
 
 header('Content-Type: application/json');
 

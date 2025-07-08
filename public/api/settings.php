@@ -1,52 +1,55 @@
 <?php
 
-require_once __DIR__ . '/../../bootstrap.php';
+require_once '../../bootstrap.php';
 
-use App\Models\Settings;
+use Models\Settings;
+use Models\Logger;
 
+session_start();
 header('Content-Type: application/json');
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
+
+$logger = new Logger();
+
 try {
-    // Get JSON input
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    if (!$input) {
-        throw new Exception('Invalid input data');
+    switch ($_SERVER['REQUEST_METHOD']) {
+        case 'GET':
+            $settings = Settings::getDefault();
+            echo json_encode($settings);
+            break;
+
+        case 'POST':
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($data['theme'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Theme is required']);
+                exit;
+            }
+
+            $settings = Settings::getDefault();
+            $settings->theme = $data['theme'];
+            $settings->save();
+
+            echo json_encode([
+                'success' => true,
+                'settings' => $settings
+            ]);
+            break;
+
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
     }
-
-    // Validate required fields
-    if (!isset($input['start_date']) || !isset($input['end_date']) || !isset($input['target_kilometers'])) {
-        throw new Exception('Missing required fields');
-    }
-
-    // Validate dates
-    if (strtotime($input['end_date']) <= strtotime($input['start_date'])) {
-        throw new Exception('End date must be after start date');
-    }
-
-    // Validate target kilometers
-    if (!is_numeric($input['target_kilometers']) || $input['target_kilometers'] <= 0) {
-        throw new Exception('Target kilometers must be a positive number');
-    }
-
-    // Get or create settings
-    $settings = Settings::first();
-    if (!$settings) {
-        $settings = new Settings();
-    }
-
-    // Update settings
-    $settings->start_date = $input['start_date'];
-    $settings->end_date = $input['end_date'];
-    $settings->target_kilometers = $input['target_kilometers'];
-    $settings->theme = isset($input['theme']) ? $input['theme'] : 'light';
-    $settings->save();
-
-    echo json_encode(['success' => true]);
 } catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
+    $logger->error('Settings API Error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Internal server error']);
 }
