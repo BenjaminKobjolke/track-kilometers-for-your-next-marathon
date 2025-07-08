@@ -7,13 +7,15 @@ use Carbon\Carbon;
 
 class User extends Model
 {
-    protected $fillable = [
+protected $fillable = [
         'email',
         'password',
         'remember_token',
         'token_expires_at',
         'reset_token',
-        'reset_token_expires_at'
+        'reset_token_expires_at',
+        'activation_token',
+        'is_active'
     ];
 
     protected $hidden = [
@@ -76,5 +78,26 @@ class User extends Model
         }
 
         return $this->reset_token_expires_at > Carbon::now();
+    }
+
+    public function activate()
+    {
+        $this->is_active = true;
+        $this->activation_token = null;
+        $this->save();
+    }
+
+    public function isActive()
+    {
+        return $this->is_active;
+    }
+
+    public function activateOnPasswordReset()
+    {
+        if (!$this->is_active) {
+            $this->activate();
+            return true;
+        }
+        return false;
     }
 }

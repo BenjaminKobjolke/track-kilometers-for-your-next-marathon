@@ -10,3 +10,4 @@ database/database.sqlite
 config.php
 logs
 .htaccess
+database/_database.sqlite

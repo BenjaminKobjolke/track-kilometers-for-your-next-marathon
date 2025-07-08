@@ -35,9 +35,14 @@ try {
     // Clear any existing remember token
     $user->clearRememberToken();
 
+    // Activate account if not already active
+    $wasActivated = $user->activateOnPasswordReset();
+
     echo json_encode([
         'success' => true,
-        'message' => 'Password has been updated successfully'
+        'message' => $wasActivated 
+            ? 'Password has been updated successfully and your account has been activated' 
+            : 'Password has been updated successfully'
     ]);
 } catch (Exception $e) {
     http_response_code(400);

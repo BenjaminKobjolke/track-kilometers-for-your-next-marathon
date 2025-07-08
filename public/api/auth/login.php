@@ -62,6 +62,11 @@ try {
         throw new Exception('Invalid email or password');
     }
 
+    // Check if account is activated
+    if (!$user->isActive()) {
+        throw new Exception('Please activate your account. Check your email for activation instructions.');
+    }
+
     // Start session
     session_start();
     $_SESSION['user_id'] = $user->id;
@@ -90,6 +95,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Server error: ' . $e->getMessage()
+        'message' => 'Error: ' . $e->getMessage()
     ]);
 }

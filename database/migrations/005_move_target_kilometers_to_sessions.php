@@ -16,10 +16,12 @@ return [
             Capsule::table('sessions')->update(['target_kilometers' => $defaultTarget]);
         }
 
-        // Remove target_kilometers from settings table
-        Capsule::schema()->table('settings', function ($table) {
-            $table->dropColumn('target_kilometers');
-        });
+        // Remove target_kilometers from settings table if it exists
+        if (Capsule::schema()->hasColumn('settings', 'target_kilometers')) {
+            Capsule::schema()->table('settings', function ($table) {
+                $table->dropColumn('target_kilometers');
+            });
+        }
     },
     'down' => function () {
         // Add target_kilometers back to settings table

@@ -58,6 +58,9 @@ if (isset($_COOKIE['remember_token'])) {
                             <button type="submit" class="btn btn-primary w-100">Login</button>
                             <div class="text-center mt-3">
                                 <a href="#" id="forgotPassword" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">Forgot Password?</a>
+                                <div class="mt-2">
+                                    <a href="<?= $config['base_url'] ?>/register.php">Don't have an account? Register here</a>
+                                </div>
                             </div>
                         </form>
                     </div>
