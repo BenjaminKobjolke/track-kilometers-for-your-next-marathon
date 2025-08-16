@@ -46,10 +46,10 @@ export class RunManager {
             });
         }
 
-        // Remove add button listener
-        const addButton = document.querySelector('[data-bs-target="#addRunModal"]');
-        if (addButton && this.boundEventHandlers.has('add')) {
-            addButton.removeEventListener('click', this.boundEventHandlers.get('add'));
+        // Remove modal show event listener
+        const modal = document.getElementById('addRunModal');
+        if (modal && this.boundEventHandlers.has('modalShow')) {
+            modal.removeEventListener('show.bs.modal', this.boundEventHandlers.get('modalShow'));
         }
 
         // Remove date input listener
@@ -91,15 +91,20 @@ export class RunManager {
             });
         }
 
-        // Reset form when adding new run
-        const addButton = document.querySelector('[data-bs-target="#addRunModal"]');
-        if (addButton) {
-            const handler = () => {
-                this.resetForm();
-                this.setDefaultDate();
+        // Reset form when adding new run - use Bootstrap modal event for reliability
+        const modal = document.getElementById('addRunModal');
+        if (modal) {
+            const handler = (event) => {
+                // Only reset for new entries (not when editing)
+                const runId = document.getElementById('runId').value;
+                if (!runId) {
+                    console.log('Modal opened for new entry, resetting form and setting default date');
+                    this.resetForm();
+                    this.setDefaultDate();
+                }
             };
-            this.boundEventHandlers.set('add', handler);
-            addButton.addEventListener('click', handler);
+            this.boundEventHandlers.set('modalShow', handler);
+            modal.addEventListener('show.bs.modal', handler);
         }
 
         // Add date validation
@@ -112,7 +117,15 @@ export class RunManager {
     }
 
     setDefaultDate() {
-        document.getElementById('runDate').value = DateFormatter.getCurrentGermanDate();
+        const dateInput = document.getElementById('runDate');
+        const currentDate = DateFormatter.getCurrentGermanDate();
+        console.log('Setting default date:', currentDate);
+        if (dateInput) {
+            dateInput.value = currentDate;
+            console.log('Date set successfully, input value:', dateInput.value);
+        } else {
+            console.error('runDate input not found');
+        }
     }
 
     resetForm() {

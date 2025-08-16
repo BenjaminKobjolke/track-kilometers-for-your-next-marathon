@@ -349,7 +349,6 @@ body[data-theme="dark"] .probability-card:hover {
     transition: all 0.3s ease;
     z-index: 1040;
     line-height: 1;
-    padding-bottom: 8px;
 }
 
 .floating-add-btn:hover {

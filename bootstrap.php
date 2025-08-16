@@ -9,21 +9,32 @@ require 'vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Models\Logger;
 
-// Register Models directory for autoloading
+// Register autoloading for all src/ namespaces
 spl_autoload_register(function ($class) {
-    $prefix = 'Models\\';
-    $base_dir = __DIR__ . '/src/Models/';
-
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
-
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-    if (file_exists($file)) {
-        require $file;
+    // List of namespaces mapped to directories
+    $namespaces = [
+        'Models\\' => __DIR__ . '/src/Models/',
+        'Controllers\\' => __DIR__ . '/src/Controllers/',
+        'Utils\\' => __DIR__ . '/src/Utils/',
+    ];
+    
+    foreach ($namespaces as $namespace => $base_dir) {
+        if (strpos($class, $namespace) === 0) {
+            $relative_class = substr($class, strlen($namespace));
+            $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+            
+            // Debug logging for deployment troubleshooting
+            if (isset($GLOBALS['debug_autoload'])) {
+                error_log("Attempting to load class: $class from file: $file");
+                error_log("File exists: " . (file_exists($file) ? 'YES' : 'NO'));
+                error_log("Directory exists: " . (is_dir($base_dir) ? 'YES' : 'NO'));
+            }
+            
+            if (file_exists($file)) {
+                require $file;
+                return;
+            }
+        }
     }
 });
 
