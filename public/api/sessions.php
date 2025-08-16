@@ -101,6 +101,9 @@ try {
             if (isset($data['end_date'])) {
                 $session->end_date = $data['end_date'];
             }
+            if (isset($data['target_kilometers'])) {
+                $session->target_kilometers = $data['target_kilometers'];
+            }
             if (isset($data['status'])) {
                 $session->status = $data['status'];
             }

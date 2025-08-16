@@ -245,6 +245,11 @@ export class SessionManager {
         return this.currentSession;
     }
 
+    async getActiveSession() {
+        await this.waitForInitialization();
+        return this.currentSession;
+    }
+
     async getCompletedSessions() {
         try {
             const response = await fetch(`${this.baseUrl}/api/sessions.php?status=completed`);

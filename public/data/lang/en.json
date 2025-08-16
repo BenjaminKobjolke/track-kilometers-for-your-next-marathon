@@ -8,11 +8,13 @@
   "button_switch_session": "Switch Session",
   "button_new_session": "New Session",
   "button_past_sessions": "Past Sessions",
+  "button_edit_session": "Edit Session",
   "button_logout": "Logout",
   "button_create": "Create",
 
   "modal_title_add_run": "Add Run",
   "modal_title_edit_run": "Edit Run",
+  "modal_title_edit_session": "Edit Session",
   "modal_title_create_session": "Create New Session",
   "modal_title_select_session": "Select Session",
   "modal_title_past_sessions": "Past Sessions",

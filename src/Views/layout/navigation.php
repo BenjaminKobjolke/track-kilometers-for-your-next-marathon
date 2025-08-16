@@ -31,6 +31,11 @@
                     <ul class="dropdown-menu">
                         <?php if ($activeSession): ?>
                         <li>
+                            <button class="dropdown-item" id="editSession">
+                                <?= $translator->get('button_edit_session') ?>
+                            </button>
+                        </li>
+                        <li>
                             <button class="dropdown-item" id="completeSession">
                                 <?= $translator->get('button_complete_session') ?>
                             </button>
@@ -68,3 +73,12 @@
         </div>
     </div>
 </nav>
+
+<!-- Floating Action Button for Mobile -->
+<button class="floating-add-btn" 
+        data-bs-toggle="modal" 
+        data-bs-target="#addRunModal" 
+        <?php echo !$activeSession ? 'disabled' : ''; ?>
+        title="<?= $translator->get('button_add_run') ?>">
+    +
+</button>
