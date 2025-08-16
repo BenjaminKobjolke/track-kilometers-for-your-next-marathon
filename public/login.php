@@ -5,7 +5,9 @@ $config = require_once __DIR__ . '/../config.php';
 use Models\User;
 use Models\TranslationManager;
 
-$translator = new TranslationManager();
+// Get language from URL parameter, localStorage will be handled by JavaScript
+$language = $_GET['lang'] ?? 'en';
+$translator = new TranslationManager($language);
 
 // Check if user is already logged in
 session_start();
@@ -31,9 +33,11 @@ if (isset($_COOKIE['remember_token'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $translator->get('page_title_login') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
+    <?php include __DIR__ . '/../src/Views/components/auth-language-switcher.php'; ?>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-4">
@@ -79,6 +83,10 @@ if (isset($_COOKIE['remember_token'])) {
         window.appConfig = {
             baseUrl: '<?= $config['base_url'] ?>'
         };
+    </script>
+    <script type="module">
+        import { AuthLanguageManager } from './js/modules/AuthLanguageManager.js';
+        new AuthLanguageManager();
     </script>
     <script type="module" src="js/app.js"></script>
 </body>

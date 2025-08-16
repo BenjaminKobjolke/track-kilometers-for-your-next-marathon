@@ -1,7 +1,9 @@
 <?php
 use Models\TranslationManager;
 if (!isset($translator)) {
-    $translator = new TranslationManager();
+    // Get language from URL parameter, localStorage will be handled by JavaScript
+    $language = $_GET['lang'] ?? 'en';
+    $translator = new TranslationManager($language);
 }
 ?>
 <!-- Password Reset Modal -->
@@ -10,7 +12,18 @@ if (!isset($translator)) {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="resetPasswordModalLabel"><?= $translator->get('modal_title_reset_password') ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown me-2">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-globe"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?lang=en<?= isset($_GET['token']) ? '&token=' . urlencode($_GET['token']) : '' ?>">English</a></li>
+                            <li><a class="dropdown-item" href="?lang=de<?= isset($_GET['token']) ? '&token=' . urlencode($_GET['token']) : '' ?>">Deutsch</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
             </div>
             <div class="modal-body">
                 <form id="resetPasswordForm">
