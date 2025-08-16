@@ -145,7 +145,7 @@ export class RunManager {
 
         const formData = {
             date: DateFormatter.germanToIsoDate(runDate),
-            kilometers: document.getElementById('kilometers').value,
+            amount: document.getElementById('amount').value,
             session_id: currentSession.id
         };
 
@@ -202,7 +202,7 @@ export class RunManager {
         const modal = new bootstrap.Modal(document.getElementById('addRunModal'));
         document.getElementById('runId').value = button.dataset.id;
         document.getElementById('runDate').value = button.dataset.date;
-        document.getElementById('kilometers').value = button.dataset.km;
+        document.getElementById('amount').value = button.dataset.amount;
         document.querySelector('#addRunModal .modal-title').textContent = translationManager.translate('modal_title_edit_run');
         modal.show();
     }

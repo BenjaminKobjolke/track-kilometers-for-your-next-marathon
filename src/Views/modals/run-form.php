@@ -7,7 +7,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><?= $translator->get('modal_title_add_run') ?></h5>
+                <h5 class="modal-title"><?= $translator->getWithSession('modal_title_add_run', $activeSession) ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -18,8 +18,8 @@
                         <input type="text" class="form-control" id="runDate" name="date" required placeholder="DD.MM.YYYY">
                     </div>
                     <div class="mb-3">
-                        <label for="kilometers" class="form-label"><?= $translator->get('label_kilometers') ?></label>
-                        <input type="number" step="0.1" class="form-control" id="kilometers" name="kilometers" required>
+                        <label for="amount" class="form-label"><?= $translator->getWithSession('label_amount', $activeSession) ?></label>
+                        <input type="number" step="0.1" class="form-control" id="amount" name="amount" required>
                     </div>
                 </form>
             </div>

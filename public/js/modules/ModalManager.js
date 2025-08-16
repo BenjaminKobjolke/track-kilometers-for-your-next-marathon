@@ -90,9 +90,9 @@ export class ModalManager {
         container.querySelectorAll('.select-session').forEach(button => {
             button.addEventListener('click', async () => {
                 try {
-                    const session = await sessionManager.setActiveSession(button.dataset.id);
-                    await updateUI(session);
-                    this.hideModal(modalElement);
+                    await sessionManager.setActiveSession(button.dataset.id);
+                    // Reload page to ensure all translations and units are updated properly
+                    window.location.reload();
                 } catch (error) {
                     console.error('Error selecting session:', error);
                     alert('Error selecting session');
@@ -116,8 +116,8 @@ export class ModalManager {
             <tr>
                 <td>${session.name}</td>
                 <td>${DateFormatter.isoToGermanDate(session.start_date)} - ${DateFormatter.isoToGermanDate(session.end_date)}</td>
-                <td>${session.stats.totalKilometers.toFixed(1)} km</td>
-                <td>${session.dailyAverage.toFixed(1)} km</td>
+                <td>${session.stats.totalKilometers.toFixed(1)} ${session.unit_short || 'units'}</td>
+                <td>${session.dailyAverage.toFixed(1)} ${session.unit_short || 'units'}</td>
                 <td>${session.status}</td>
                 <td>
                     <button class="btn btn-sm btn-primary reopen-session me-2" data-id="${session.id}">
@@ -135,8 +135,8 @@ export class ModalManager {
             button.addEventListener('click', async () => {
                 try {
                     await sessionManager.reopenSession(button.dataset.id);
-                    await updateUI();
-                    this.hideModal(modalElement);
+                    // Reload page to ensure all translations and units are updated properly
+                    window.location.reload();
                 } catch (error) {
                     console.error('Error reopening session:', error);
                     alert('Error reopening session');

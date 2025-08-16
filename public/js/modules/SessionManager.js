@@ -57,7 +57,7 @@ export class SessionManager {
         }
     }
 
-    async createSession(name, startDate, endDate, targetKilometers) {
+    async createSession(name, startDate, endDate, targetKilometers, unit = 'Kilometers', unitShort = 'km') {
         const response = await fetch(`${this.baseUrl}/api/sessions.php`, {
             method: 'POST',
             headers: {
@@ -67,7 +67,9 @@ export class SessionManager {
                 name,
                 start_date: DateFormatter.germanToIsoDate(startDate),
                 end_date: DateFormatter.germanToIsoDate(endDate),
-                target_kilometers: targetKilometers
+                target_kilometers: targetKilometers,
+                unit: unit,
+                unit_short: unitShort
             })
         });
 

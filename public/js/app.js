@@ -36,6 +36,8 @@ async function initializeApp() {
                 const startDate = document.getElementById('sessionStartDate').value;
                 const endDate = document.getElementById('sessionEndDate').value;
                 const targetKm = document.getElementById('sessionTargetKm').value;
+                const unit = document.getElementById('sessionUnit').value;
+                const unitShort = document.getElementById('sessionUnitShort').value;
 
                 try {
                     let session;
@@ -45,12 +47,17 @@ async function initializeApp() {
                             name: name,
                             start_date: startDate,
                             end_date: endDate,
-                            target_kilometers: parseFloat(targetKm)
+                            target_kilometers: parseFloat(targetKm),
+                            unit: unit,
+                            unit_short: unitShort
                         });
                     } else {
                         // Create new session
-                        session = await sessionManager.createSession(name, startDate, endDate, parseFloat(targetKm));
+                        session = await sessionManager.createSession(name, startDate, endDate, parseFloat(targetKm), unit, unitShort);
                     }
+                    // Update translation context with new session
+                    translationManager.updateSessionContext(session);
+                    uiManager.refreshDynamicText();
                     await uiManager.updateUI(session, runManager, statsManager);
                     modalManager.hideModal(document.getElementById('createSessionModal'));
                 } catch (error) {
@@ -77,6 +84,8 @@ async function initializeApp() {
                         document.getElementById('sessionStartDate').value = DateFormatter.isoToGermanDate(activeSession.start_date);
                         document.getElementById('sessionEndDate').value = DateFormatter.isoToGermanDate(activeSession.end_date);
                         document.getElementById('sessionTargetKm').value = activeSession.target_kilometers;
+                        document.getElementById('sessionUnit').value = activeSession.unit || 'Kilometers';
+                        document.getElementById('sessionUnitShort').value = activeSession.unit_short || 'km';
                         
                         // Update modal title and button text
                         document.getElementById('sessionModalTitle').textContent = translationManager.translate('modal_title_edit_session');
@@ -101,6 +110,8 @@ async function initializeApp() {
                 document.getElementById('sessionStartDate').value = '';
                 document.getElementById('sessionEndDate').value = '';
                 document.getElementById('sessionTargetKm').value = '500';
+                document.getElementById('sessionUnit').value = 'Kilometers';
+                document.getElementById('sessionUnitShort').value = 'km';
                 
                 // Reset modal title and button text
                 document.getElementById('sessionModalTitle').textContent = translationManager.translate('modal_title_create_session');

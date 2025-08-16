@@ -26,8 +26,22 @@
                         <input type="text" class="form-control" id="sessionEndDate" data-type="date" required placeholder="DD.MM.YYYY">
                     </div>
                     <div class="mb-3">
-                        <label for="sessionTargetKm" class="form-label"><?= $translator->get('label_target_kilometers') ?></label>
+                        <label for="sessionTargetKm" class="form-label"><?= $translator->get('label_target_amount', [], null) ?></label>
                         <input type="number" step="0.1" class="form-control" id="sessionTargetKm" required value="500">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="sessionUnit" class="form-label"><?= $translator->get('label_unit') ?></label>
+                                <input type="text" class="form-control" id="sessionUnit" required value="Kilometers" placeholder="e.g. Kilometers, Books, Hours">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="sessionUnitShort" class="form-label"><?= $translator->get('label_unit_short') ?></label>
+                                <input type="text" class="form-control" id="sessionUnitShort" required value="km" placeholder="e.g. km, books, hrs">
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

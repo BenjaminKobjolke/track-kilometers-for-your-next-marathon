@@ -12,7 +12,11 @@
         window.appConfig = {
             baseUrl: '<?= $config['base_url'] ?>',
             translations: <?= json_encode($translator->getAll()) ?>,
-            language: '<?= $settings->language ?>'
+            language: '<?= $settings->language ?>',
+            session: <?= $activeSession ? json_encode([
+                'unit' => $activeSession->unit ?? 'Kilometers',
+                'unit_short' => $activeSession->unit_short ?? 'km'
+            ]) : json_encode(['unit' => 'Kilometers', 'unit_short' => 'km']) ?>
         };
     </script>
     <script type="module" src="js/app.js"></script>

@@ -21,7 +21,7 @@ class TranslationManager
         }
     }
 
-    public function get($key, array $params = [])
+    public function get($key, array $params = [], $session = null)
     {
         if (!isset($this->translations[$key])) {
             return $key;
@@ -29,12 +29,33 @@ class TranslationManager
 
         $translation = $this->translations[$key];
 
+        // Auto-inject session unit data with fallbacks
+        $defaultParams = [
+            'unit' => 'Entry',
+            'unit_short' => 'entries'
+        ];
+
+        if ($session && isset($session->unit) && isset($session->unit_short)) {
+            $defaultParams = [
+                'unit' => $session->unit,
+                'unit_short' => $session->unit_short
+            ];
+        }
+
+        $params = array_merge($defaultParams, $params);
+
         // Replace parameters
         foreach ($params as $param => $value) {
             $translation = str_replace("{{$param}}", $value, $translation);
         }
 
         return $translation;
+    }
+
+    // Helper method for getting translations with automatic session context
+    public function getWithSession($key, $session, array $params = [])
+    {
+        return $this->get($key, $params, $session);
     }
 
     public function getAll()

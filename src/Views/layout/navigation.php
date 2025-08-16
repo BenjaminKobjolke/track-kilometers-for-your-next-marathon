@@ -21,7 +21,7 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <button class="btn btn-success nav-link" data-bs-toggle="modal" data-bs-target="#addRunModal" <?php echo !$activeSession ? 'disabled' : ''; ?>>
-                        <?= $translator->get('button_add_run') ?>
+                        <?= $translator->getWithSession('button_add_run', $activeSession) ?>
                     </button>
                 </li>
                 <li class="nav-item dropdown">
@@ -32,7 +32,7 @@
                         <?php if ($activeSession): ?>
                         <li>
                             <button class="dropdown-item" id="editSession">
-                                <?= $translator->get('button_edit_session') ?>
+                                <?= $translator->getWithSession('button_edit_session', $activeSession) ?>
                             </button>
                         </li>
                         <li>
@@ -79,6 +79,6 @@
         data-bs-toggle="modal" 
         data-bs-target="#addRunModal" 
         <?php echo !$activeSession ? 'disabled' : ''; ?>
-        title="<?= $translator->get('button_add_run') ?>">
+        title="<?= $translator->getWithSession('button_add_run', $activeSession) ?>">
     +
 </button>

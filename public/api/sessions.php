@@ -66,6 +66,8 @@ try {
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
                 'target_kilometers' => $data['target_kilometers'],
+                'unit' => $data['unit'] ?? 'Kilometers',
+                'unit_short' => $data['unit_short'] ?? 'km',
                 'status' => 'active'
             ]);
             
@@ -103,6 +105,12 @@ try {
             }
             if (isset($data['target_kilometers'])) {
                 $session->target_kilometers = $data['target_kilometers'];
+            }
+            if (isset($data['unit'])) {
+                $session->unit = $data['unit'];
+            }
+            if (isset($data['unit_short'])) {
+                $session->unit_short = $data['unit_short'];
             }
             if (isset($data['status'])) {
                 $session->status = $data['status'];

@@ -43,7 +43,7 @@ export class StatsManager {
 
     async updateStats(session, runs) {
         // Calculate stats
-        const totalKilometers = runs.reduce((sum, run) => sum + parseFloat(run.kilometers), 0);
+        const totalKilometers = runs.reduce((sum, run) => sum + parseFloat(run.amount), 0);
         const startDate = new Date(session.start_date);
         const endDate = new Date(session.end_date);
         const now = new Date();
@@ -64,8 +64,8 @@ export class StatsManager {
         const remainingDays = Math.max(0, Math.ceil((endDate - now) / (1000 * 60 * 60 * 24)));
         
         // Calculate probability based on estimated total and current progress
-        const currentProgress = (totalKilometers / session.target_kilometers) * 100;
-        const estimatedProgress = (estimatedTotal / session.target_kilometers) * 100;
+        const currentProgress = session.target_kilometers > 0 ? (totalKilometers / session.target_kilometers) * 100 : 0;
+        const estimatedProgress = session.target_kilometers > 0 ? (estimatedTotal / session.target_kilometers) * 100 : 0;
         
         // If we're ahead of schedule (estimated > target), probability should be high
         // If we're behind schedule but catching up (current < target but estimated close to target), probability should be moderate
@@ -86,15 +86,23 @@ export class StatsManager {
             );
         }
 
-        // Update stats in UI
-        this.cards[0].querySelector('.card-text').textContent = `${totalKilometers.toFixed(1)} km`;
-        this.cards[0].querySelector('.card-subtext').textContent = `since ${DateFormatter.formatDateForDisplay(startDate)}`;
-        this.cards[1].querySelector('.card-subtext').textContent = `daily average of ${averageKilometers.toFixed(1)} km`;
-        this.cards[1].querySelector('.card-text').textContent = `${estimatedTotal.toFixed(1)} km`;
-        this.cards[2].querySelector('.card-text').textContent = `${remainingDays} days`;
-        this.cards[2].querySelector('.card-subtext').textContent = `until ${DateFormatter.formatDateForDisplay(endDate)}`;
-        this.cards[3].querySelector('.card-subtext').textContent = `Target of ${session.target_kilometers.toFixed(1)} km`;
-        this.cards[3].querySelector('.card-text').textContent = `${probability.toFixed(1)}%`;
+        // Update stats in UI with NaN protection using specific IDs
+        const unitShort = session.unit_short || 'units';
+        
+        // Use specific IDs for targeted updates
+        const totalAmountEl = document.getElementById('total-amount');
+        const dailyAverageEl = document.getElementById('daily-average');
+        const estimatedTotalEl = document.getElementById('estimated-total');
+        const remainingDaysEl = document.getElementById('remaining-days');
+        const targetInfoEl = document.getElementById('target-info');
+        const targetProbabilityEl = document.getElementById('target-probability');
+        
+        if (totalAmountEl) totalAmountEl.textContent = `${(isNaN(totalKilometers) ? 0 : totalKilometers).toFixed(1)} ${unitShort}`;
+        if (dailyAverageEl) dailyAverageEl.textContent = `daily average of ${(isNaN(averageKilometers) ? 0 : averageKilometers).toFixed(1)} ${unitShort}`;
+        if (estimatedTotalEl) estimatedTotalEl.textContent = `${(isNaN(estimatedTotal) ? 0 : estimatedTotal).toFixed(1)} ${unitShort}`;
+        if (remainingDaysEl) remainingDaysEl.textContent = `${remainingDays} days`;
+        if (targetInfoEl) targetInfoEl.textContent = `Target of ${session.target_kilometers.toFixed(1)} ${unitShort}`;
+        if (targetProbabilityEl) targetProbabilityEl.textContent = `${(isNaN(probability) ? 0 : probability).toFixed(1)}%`;
     }
 
     clearStats() {
@@ -107,7 +115,7 @@ export class StatsManager {
     }
 
     calculateSessionStats(session, runs) {
-        const totalKilometers = runs.reduce((sum, run) => sum + parseFloat(run.kilometers), 0);
+        const totalKilometers = runs.reduce((sum, run) => sum + parseFloat(run.amount), 0);
         const startDate = new Date(session.start_date);
         const endDate = new Date(session.end_date);
         const now = new Date();

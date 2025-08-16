@@ -6,6 +6,23 @@ export class UIManager {
         this.currentSessionInfo = document.getElementById('currentSessionInfo');
     }
 
+    refreshDynamicText() {
+        // Update floating action button text
+        const floatingBtn = document.querySelector('.floating-add-btn');
+        if (floatingBtn) {
+            floatingBtn.title = translationManager.translate('button_add_run');
+        }
+
+        // Update navbar add button text
+        const navAddBtn = document.querySelector('[data-bs-target="#addRunModal"]');
+        if (navAddBtn && navAddBtn.textContent.trim() !== '+') {
+            navAddBtn.textContent = translationManager.translate('button_add_run');
+        }
+
+        // Update modal titles and labels (they will be updated when opened)
+        // Update any other dynamic text elements as needed
+    }
+
     updateSessionInfo(session) {
         if (this.currentSessionInfo) {
             if (!session) {
@@ -22,12 +39,12 @@ export class UIManager {
         this.runsTableBody.innerHTML = runs.map(run => `
             <tr>
                 <td>${run.formatted_date}</td>
-                <td>${Number(run.kilometers).toFixed(1)}</td>
-                <td class="actions-cell">
+                <td>${Number(run.amount || run.kilometers).toFixed(1)}</td>
+                <td class="actions-cell text-end">
                     <button class="btn btn-sm btn-primary edit-run me-2" 
                             data-id="${run.id}"
                             data-date="${run.formatted_date}"
-                            data-km="${run.kilometers}">
+                            data-amount="${run.amount || run.kilometers}">
                         ${translationManager.translate('button_edit')}
                     </button>
                     <button class="btn btn-sm btn-danger delete-run"
@@ -41,7 +58,13 @@ export class UIManager {
     }
 
     async updateUI(session, runManager, statsManager) {
+        // Update translation context with new session
+        if (session) {
+            translationManager.updateSessionContext(session);
+        }
+        
         this.updateSessionInfo(session);
+        this.refreshDynamicText(); // Update all dynamic text with new session context
 
         try {
             const runsResponse = await fetch('api/runs.php');

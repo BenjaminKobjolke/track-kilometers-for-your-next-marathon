@@ -12,14 +12,18 @@ class Session extends Model
         'start_date',
         'end_date',
         'status',
-        'target_kilometers'
+        'target_kilometers',
+        'unit',
+        'unit_short'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'status' => 'string',
-        'target_kilometers' => 'float'
+        'target_kilometers' => 'float',
+        'unit' => 'string',
+        'unit_short' => 'string'
     ];
 
     public function user()

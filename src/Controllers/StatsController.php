@@ -21,7 +21,7 @@ class StatsController {
             ->orderBy('date', 'desc')
             ->get();
         
-        $totalKilometers = $runs->sum('kilometers');
+        $totalKilometers = $runs->sum('amount');
         $averageKilometers = Run::calculateAverageKilometers($session->start_date, $session->end_date, $session->id);
         
         // Calculate estimated total based on current average
@@ -33,8 +33,8 @@ class StatsController {
         $remainingDays = max(0, $remainingDays);
         
         // Calculate probability based on estimated total and current progress
-        $currentProgress = ($totalKilometers / $session->target_kilometers) * 100;
-        $estimatedProgress = ($estimatedTotal / $session->target_kilometers) * 100;
+        $currentProgress = $session->target_kilometers > 0 ? ($totalKilometers / $session->target_kilometers) * 100 : 0;
+        $estimatedProgress = $session->target_kilometers > 0 ? ($estimatedTotal / $session->target_kilometers) * 100 : 0;
         
         // Calculate probability
         $probability = $this->calculateProbability($estimatedTotal, $currentProgress, $session->target_kilometers);
@@ -50,6 +50,10 @@ class StatsController {
     }
 
     private function calculateProbability($estimatedTotal, $currentProgress, $targetKilometers) {
+        if ($targetKilometers <= 0) {
+            return 0;
+        }
+        
         if ($estimatedTotal >= $targetKilometers) {
             // If we're projected to exceed target, probability is very high
             return min(100, 90 + ($currentProgress / 10));

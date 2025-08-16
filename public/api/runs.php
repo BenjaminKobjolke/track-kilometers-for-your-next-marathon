@@ -66,17 +66,40 @@ try {
         exit;
     }
 
-    // For non-GET requests, require active session
-    if (!isset($_SESSION['active_session_id'])) {
-        http_response_code(400);
-        echo json_encode(['error' => $translator->get('error_no_active_session')]);
-        exit;
+    // For non-GET requests, determine which session to use
+    $sessionId = null;
+    
+    // Check if session_id is provided in input data (for POST/DELETE)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if ($input && isset($input['session_id'])) {
+            $sessionId = $input['session_id'];
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if ($input && isset($input['session_id'])) {
+            $sessionId = $input['session_id'];
+        }
+    }
+    
+    // Fall back to active session if no session_id provided
+    if (!$sessionId) {
+        if (!isset($_SESSION['active_session_id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => $translator->get('error_no_active_session')]);
+            exit;
+        }
+        $sessionId = $_SESSION['active_session_id'];
     }
 
-    $activeSession = Session::find($_SESSION['active_session_id']);
-    if (!$activeSession || $activeSession->status !== 'active') {
+    // Validate session exists and belongs to current user
+    $activeSession = Session::where('id', $sessionId)
+        ->where('user_id', $_SESSION['user_id'])
+        ->first();
+        
+    if (!$activeSession) {
         http_response_code(400);
-        echo json_encode(['error' => $translator->get('error_invalid_session')]);
+        echo json_encode(['error' => $translator->get('error_session_not_found')]);
         exit;
     }
 
@@ -101,15 +124,13 @@ try {
         exit;
     }
 
-    // Handle POST request
-    $input = json_decode(file_get_contents('php://input'), true);
-    
+    // Handle POST request - input already decoded above
     if (!$input) {
         throw new Exception($translator->get('error_invalid_input'));
     }
 
     // Validate required fields
-    if (!isset($input['date']) || !isset($input['kilometers'])) {
+    if (!isset($input['date']) || !isset($input['amount'])) {
         throw new Exception($translator->get('error_missing_fields'));
     }
 
@@ -133,14 +154,14 @@ try {
         }
         
         $run->date = $input['date'];
-        $run->kilometers = $input['kilometers'];
+        $run->amount = $input['amount'];
         $run->save();
     } 
     // Create new run
     else {
         $run = new Run();
         $run->date = $input['date'];
-        $run->kilometers = $input['kilometers'];
+        $run->amount = $input['amount'];
         $run->session_id = $activeSession->id;
         $run->save();
     }
