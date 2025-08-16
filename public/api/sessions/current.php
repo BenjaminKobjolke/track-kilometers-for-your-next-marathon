@@ -7,6 +7,7 @@ session_start();
 
 use Models\Session;
 use Models\Logger;
+use Controllers\SessionController;
 
 header('Content-Type: application/json');
 
@@ -21,24 +22,12 @@ $userId = $_SESSION['user_id'];
 $logger = new Logger();
 
 try {
-    // Check if there's an active session ID in the PHP session
-    if (!isset($_SESSION['active_session_id'])) {
-        http_response_code(404);
-        echo json_encode(['error' => 'No active session']);
-        exit;
-    }
-
-    // Get the active session
-    $session = Session::where('id', $_SESSION['active_session_id'])
-        ->where('user_id', $userId)
-        ->where('status', '=', 'active')
-        ->first();
+    $sessionController = new SessionController();
+    $session = $sessionController->getActiveSession();
 
     if (!$session) {
-        // Clear invalid session ID
-        unset($_SESSION['active_session_id']);
         http_response_code(404);
-        echo json_encode(['error' => 'Active session not found']);
+        echo json_encode(['error' => 'No active session']);
         exit;
     }
 

@@ -7,6 +7,7 @@ session_start();
 
 use Models\Session;
 use Models\Logger;
+use Controllers\SessionController;
 
 header('Content-Type: application/json');
 
@@ -46,7 +47,7 @@ try {
             break;
 
         case 'POST':
-            // Set active session in user's session
+            // Set active session using SessionController
             $data = json_decode(file_get_contents('php://input'), true);
             
             if (!isset($data['session_id'])) {
@@ -55,24 +56,17 @@ try {
                 exit;
             }
 
-            $session = Session::where('user_id', $userId)
-                ->where('id', $data['session_id'])
-                ->where('status', '=', 'active')
-                ->first();
-
-            if (!$session) {
+            $sessionController = new SessionController();
+            try {
+                $session = $sessionController->setActiveSession($data['session_id']);
+                echo json_encode([
+                    'success' => true,
+                    'session' => $session
+                ]);
+            } catch (Exception $e) {
                 http_response_code(404);
-                echo json_encode(['error' => 'Active session not found']);
-                exit;
+                echo json_encode(['error' => $e->getMessage()]);
             }
-
-            // Store active session ID in user's session
-            $_SESSION['active_session_id'] = $session->id;
-            
-            echo json_encode([
-                'success' => true,
-                'session' => $session
-            ]);
             break;
 
         default:

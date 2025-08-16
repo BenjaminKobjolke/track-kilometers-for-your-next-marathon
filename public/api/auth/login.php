@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../../bootstrap.php';
 use Models\User;
 use Models\Logger;
 use Models\TranslationManager;
+use Controllers\SessionController;
 
 $logger = new Logger('auth');
 $translator = new TranslationManager();
@@ -72,6 +73,15 @@ try {
     // Start session
     session_start();
     $_SESSION['user_id'] = $user->id;
+
+    // Restore last active session
+    try {
+        $sessionController = new SessionController();
+        $sessionController->getActiveSession(); // This will automatically restore the last active session
+    } catch (Exception $e) {
+        // Log but don't fail login if session restoration fails
+        $logger->info('Could not restore last active session: ' . $e->getMessage());
+    }
 
     // Handle remember me
     if (isset($input['remember_me']) && $input['remember_me']) {

@@ -15,7 +15,8 @@ protected $fillable = [
         'reset_token',
         'reset_token_expires_at',
         'activation_token',
-        'is_active'
+        'is_active',
+        'last_active_session_id'
     ];
 
     protected $hidden = [
@@ -32,6 +33,11 @@ protected $fillable = [
     public function sessions()
     {
         return $this->hasMany(Session::class);
+    }
+
+    public function lastActiveSession()
+    {
+        return $this->belongsTo(Session::class, 'last_active_session_id');
     }
 
     public function isRememberTokenValid()

@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Models\Session;
 use Models\Settings;
+use Models\User;
 
 class SessionController {
     private $userId;
@@ -39,7 +40,22 @@ class SessionController {
             }
         }
 
-        // If no active session, try to find the most recent active session
+        // If no active session, try to get the user's last active session
+        if (!$activeSession) {
+            $user = User::find($this->userId);
+            if ($user && $user->last_active_session_id) {
+                $activeSession = Session::where('id', $user->last_active_session_id)
+                    ->where('user_id', $this->userId)
+                    ->where('status', '=', 'active')
+                    ->first();
+                
+                if ($activeSession) {
+                    $_SESSION['active_session_id'] = $activeSession->id;
+                }
+            }
+        }
+
+        // If still no active session, try to find the most recent active session
         if (!$activeSession) {
             $activeSession = Session::where('user_id', $this->userId)
                 ->where('status', '=', 'active')
@@ -49,9 +65,35 @@ class SessionController {
             // Store the session ID if found
             if ($activeSession) {
                 $_SESSION['active_session_id'] = $activeSession->id;
+                $this->updateLastActiveSession($activeSession->id);
             }
         }
 
         return $activeSession;
+    }
+
+    public function setActiveSession($sessionId) {
+        $this->checkAuth();
+        
+        $session = Session::where('id', $sessionId)
+            ->where('user_id', $this->userId)
+            ->where('status', '=', 'active')
+            ->first();
+        
+        if ($session) {
+            $_SESSION['active_session_id'] = $session->id;
+            $this->updateLastActiveSession($session->id);
+            return $session;
+        }
+        
+        throw new \Exception('Session not found or not active');
+    }
+
+    private function updateLastActiveSession($sessionId) {
+        $user = User::find($this->userId);
+        if ($user) {
+            $user->last_active_session_id = $sessionId;
+            $user->save();
+        }
     }
 }
