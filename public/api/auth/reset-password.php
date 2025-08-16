@@ -5,10 +5,12 @@ $config = require_once __DIR__ . '/../../../config.php';
 
 use Models\User;
 use Models\Logger;
+use Models\TranslationManager;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 $logger = new Logger('auth');
+$translator = new TranslationManager();
 
 header('Content-Type: application/json');
 
@@ -17,13 +19,13 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input || !isset($input['email'])) {
-        throw new Exception('Invalid input data');
+        throw new Exception($translator->get('error_invalid_input'));
     }
 
     // Find user by email
     $user = User::where('email', $input['email'])->first();
     if (!$user) {
-        throw new Exception('Email not found');
+        throw new Exception($translator->get('error_email_not_found'));
     }
 
     // Generate reset token
@@ -42,13 +44,13 @@ try {
     $mail->setFrom($config['email']['from_address'], $config['email']['from_name']);
     $mail->addAddress($user->email);
     $mail->isHTML(true);
-    $mail->Subject = 'Password Reset Request';
+    $mail->Subject = $translator->get('email_subject_reset');
     $mail->Body = "
-        <h2>Password Reset Request</h2>
-        <p>Click the link below to reset your password:</p>
+        <h2>" . $translator->get('email_reset_heading') . "</h2>
+        <p>" . $translator->get('email_reset_instruction') . "</p>
         <p><a href='{$resetLink}'>{$resetLink}</a></p>
-        <p>This link will expire in 24 hours.</p>
-        <p>If you didn't request this, please ignore this email.</p>
+        <p>" . $translator->get('email_reset_expiry') . "</p>
+        <p>" . $translator->get('email_reset_disclaimer') . "</p>
     ";
 
     $mail->send();
@@ -60,7 +62,7 @@ try {
     
     echo json_encode([
         'success' => true,
-        'message' => 'Password reset link has been sent to your email'
+        'message' => $translator->get('success_reset_link_sent')
     ]);
 } catch (Exception $e) {
     $logger->error('Password reset failed', [
@@ -70,6 +72,6 @@ try {
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'message' => 'Failed to send reset link: ' . $e->getMessage()
+        'message' => $translator->get('error_reset_failed', ['message' => $e->getMessage()])
     ]);
 }

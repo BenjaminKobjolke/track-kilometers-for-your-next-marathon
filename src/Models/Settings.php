@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Settings extends Model
 {
     protected $table = 'settings';
-    protected $fillable = ['theme'];
+    protected $fillable = ['theme', 'language'];
 
     // Disable Laravel's default timestamps
     public $timestamps = false;
@@ -22,7 +22,8 @@ class Settings extends Model
         $settings = self::first();
         if (!$settings) {
             $settings = self::create([
-                'theme' => 'light'
+                'theme' => 'light',
+                'language' => 'en'
             ]);
         }
         return $settings;

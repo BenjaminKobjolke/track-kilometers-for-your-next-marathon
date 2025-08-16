@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../bootstrap.php';
 
 use Models\Run;
 use Models\Session;
+use Models\TranslationManager;
+
+$translator = new TranslationManager();
 
 session_start();
 header('Content-Type: application/json');
@@ -11,7 +14,7 @@ header('Content-Type: application/json');
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
+    echo json_encode(['error' => $translator->get('error_unauthorized')]);
     exit;
 }
 
@@ -26,7 +29,7 @@ try {
 
             if (!$session) {
                 http_response_code(404);
-                echo json_encode(['error' => 'Session not found']);
+                echo json_encode(['error' => $translator->get('error_session_not_found')]);
                 exit;
             }
 
@@ -38,14 +41,14 @@ try {
         else {
             if (!isset($_SESSION['active_session_id'])) {
                 http_response_code(400);
-                echo json_encode(['error' => 'No active session']);
+                echo json_encode(['error' => $translator->get('error_no_active_session')]);
                 exit;
             }
 
             $activeSession = Session::find($_SESSION['active_session_id']);
             if (!$activeSession || $activeSession->status !== 'active') {
                 http_response_code(400);
-                echo json_encode(['error' => 'Invalid or inactive session']);
+                echo json_encode(['error' => $translator->get('error_invalid_session')]);
                 exit;
             }
 
@@ -66,14 +69,14 @@ try {
     // For non-GET requests, require active session
     if (!isset($_SESSION['active_session_id'])) {
         http_response_code(400);
-        echo json_encode(['error' => 'No active session']);
+        echo json_encode(['error' => $translator->get('error_no_active_session')]);
         exit;
     }
 
     $activeSession = Session::find($_SESSION['active_session_id']);
     if (!$activeSession || $activeSession->status !== 'active') {
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid or inactive session']);
+        echo json_encode(['error' => $translator->get('error_invalid_session')]);
         exit;
     }
 
@@ -82,7 +85,7 @@ try {
         $input = json_decode(file_get_contents('php://input'), true);
         
         if (!$input || !isset($input['id'])) {
-            throw new Exception('Invalid input data');
+            throw new Exception($translator->get('error_invalid_input'));
         }
 
         $run = Run::where('id', $input['id'])
@@ -90,7 +93,7 @@ try {
             ->first();
             
         if (!$run) {
-            throw new Exception('Run not found in current session');
+            throw new Exception($translator->get('error_run_not_found'));
         }
 
         $run->delete();
@@ -102,12 +105,12 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input) {
-        throw new Exception('Invalid input data');
+        throw new Exception($translator->get('error_invalid_input'));
     }
 
     // Validate required fields
     if (!isset($input['date']) || !isset($input['kilometers'])) {
-        throw new Exception('Missing required fields');
+        throw new Exception($translator->get('error_missing_fields'));
     }
 
     // Validate date is within session period
@@ -116,7 +119,7 @@ try {
     $sessionEnd = new DateTime($activeSession->end_date);
 
     if ($runDate < $sessionStart || $runDate > $sessionEnd) {
-        throw new Exception('Run date must be within the session period');
+        throw new Exception($translator->get('error_date_out_of_range'));
     }
 
     // Update existing run
@@ -126,7 +129,7 @@ try {
             ->first();
             
         if (!$run) {
-            throw new Exception('Run not found in current session');
+            throw new Exception($translator->get('error_run_not_found'));
         }
         
         $run->date = $input['date'];

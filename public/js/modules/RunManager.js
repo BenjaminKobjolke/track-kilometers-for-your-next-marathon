@@ -1,4 +1,5 @@
 import { DateFormatter } from './DateFormatter.js';
+import translationManager from './TranslationManager.js';
 
 export class RunManager {
     constructor(sessionManager, uiManager, statsManager) {
@@ -117,7 +118,7 @@ export class RunManager {
     resetForm() {
         document.getElementById('runForm').reset();
         document.getElementById('runId').value = '';
-        document.querySelector('#addRunModal .modal-title').textContent = 'Add Run';
+        document.querySelector('#addRunModal .modal-title').textContent = translationManager.translate('modal_title_add_run');
     }
 
     async updateUIWithRuns(runs, session) {
@@ -130,7 +131,7 @@ export class RunManager {
         const runDate = document.getElementById('runDate').value;
         
         if (!DateFormatter.isValidGermanDate(runDate)) {
-            alert('Please enter a valid date in DD.MM.YYYY format');
+            alert(translationManager.translate('error_invalid_date'));
             return;
         }
 
@@ -138,7 +139,7 @@ export class RunManager {
         // Check if there's an active session
         const currentSession = await this.sessionManager.getCurrentSession();
         if (!currentSession) {
-            alert('Please select or create a session first');
+            alert(translationManager.translate('error_no_session'));
             return;
         }
 
@@ -158,7 +159,10 @@ export class RunManager {
         const sessionEnd = new Date(currentSession.end_date);
 
         if (runDateObj < sessionStart || runDateObj > sessionEnd) {
-            alert(`Run date must be between ${DateFormatter.isoToGermanDate(currentSession.start_date)} and ${DateFormatter.isoToGermanDate(currentSession.end_date)}`);
+            alert(translationManager.translate('message_run_date_range', {
+                start: DateFormatter.isoToGermanDate(currentSession.start_date),
+                end: DateFormatter.isoToGermanDate(currentSession.end_date)
+            }));
             return;
         }
 
@@ -185,11 +189,11 @@ export class RunManager {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('addRunModal'));
                 if (modal) modal.hide();
             } else {
-                alert('Error saving run: ' + data.message);
+                alert(translationManager.translate('error_save_failed'));
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error saving run');
+            alert(translationManager.translate('error_save_failed'));
         }
     }
 
@@ -199,7 +203,7 @@ export class RunManager {
         document.getElementById('runId').value = button.dataset.id;
         document.getElementById('runDate').value = button.dataset.date;
         document.getElementById('kilometers').value = button.dataset.km;
-        document.querySelector('#addRunModal .modal-title').textContent = 'Edit Run';
+        document.querySelector('#addRunModal .modal-title').textContent = translationManager.translate('modal_title_edit_run');
         modal.show();
     }
 
@@ -208,7 +212,7 @@ export class RunManager {
         const runId = button.dataset.id;
         const date = button.dataset.date;
 
-        if (!confirm(`Are you sure you want to delete the run from ${date}?`)) {
+        if (!confirm(translationManager.translate('message_confirm_delete', { date }))) {
             return;
         }
 
@@ -233,11 +237,11 @@ export class RunManager {
                     await this.updateUIWithRuns([], currentSession);
                 }
             } else {
-                alert('Error deleting run: ' + data.message);
+                alert(translationManager.translate('error_delete_failed', { message: data.message }));
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error deleting run');
+            alert(translationManager.translate('error_delete_failed', { message: error.message || '' }));
         }
     }
 }

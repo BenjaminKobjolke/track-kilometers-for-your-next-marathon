@@ -1,3 +1,5 @@
+import translationManager from './TranslationManager.js';
+
 export class SettingsManager {
     constructor() {
         this.bindEvents();
@@ -20,7 +22,8 @@ export class SettingsManager {
 
     async saveSettings() {
         const formData = {
-            theme: document.getElementById('theme').value
+            theme: document.getElementById('theme').value,
+            language: document.getElementById('language').value
         };
 
         // Apply theme immediately
@@ -37,13 +40,14 @@ export class SettingsManager {
             const data = await response.json();
             
             if (data.success) {
+                // Always reload page to get new translations
                 location.reload();
             } else {
-                alert('Error saving settings: ' + data.message);
+                alert(translationManager.translate('error_saving_settings', { message: data.message }));
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error saving settings');
+            alert(translationManager.translate('error_saving_settings', { message: error.message }));
         }
     }
 }

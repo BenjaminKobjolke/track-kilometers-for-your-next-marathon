@@ -1,4 +1,5 @@
 import { DateFormatter } from './DateFormatter.js';
+import probabilityManager from './ProbabilityManager.js';
 
 export class StatsManager {
     constructor() {
@@ -15,14 +16,6 @@ export class StatsManager {
     }
 
     showProbabilityInfo() {
-        // Get the current values
-        const currentProgressValue = document.getElementById('currentProgressValue');
-        const currentKmValue = document.getElementById('currentKmValue');
-        const targetKmValue = document.getElementById('targetKmValue');
-        const estimatedProgressValue = document.getElementById('estimatedProgressValue');
-        const estimatedKmValue = document.getElementById('estimatedKmValue');
-        const finalProbabilityValue = document.getElementById('finalProbabilityValue');
-
         // Get the current values from the cards
         const currentKm = parseFloat(this.cards[0].querySelector('.card-text').textContent);
         const estimatedKm = parseFloat(this.cards[1].querySelector('.card-text').textContent);
@@ -33,13 +26,15 @@ export class StatsManager {
         const currentProgress = (currentKm / targetKm) * 100;
         const estimatedProgress = (estimatedKm / targetKm) * 100;
 
-        // Update modal values
-        currentProgressValue.textContent = currentProgress.toFixed(1);
-        currentKmValue.textContent = currentKm.toFixed(1);
-        targetKmValue.textContent = targetKm.toFixed(1);
-        estimatedProgressValue.textContent = estimatedProgress.toFixed(1);
-        estimatedKmValue.textContent = estimatedKm.toFixed(1);
-        finalProbabilityValue.textContent = probability.toFixed(1);
+        // Update modal values using ProbabilityManager
+        probabilityManager.updateProbabilityInfo(
+            currentKm,
+            targetKm,
+            estimatedKm,
+            currentProgress,
+            estimatedProgress,
+            probability
+        );
 
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('probabilityInfoModal'));

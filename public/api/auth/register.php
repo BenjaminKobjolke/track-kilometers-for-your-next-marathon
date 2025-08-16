@@ -3,12 +3,14 @@ require_once __DIR__ . '/../../../bootstrap.php';
 
 use Models\User;
 use Models\Logger;
+use Models\TranslationManager;
 use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 $logger = new Logger('auth');
+$translator = new TranslationManager();
 
 header('Content-Type: application/json');
 
@@ -18,17 +20,17 @@ try {
     $data = json_decode($json);
 
     if (!$data || !isset($data->email) || !isset($data->password)) {
-        throw new Exception('Invalid input data');
+        throw new Exception($translator->get('error_invalid_input'));
     }
 
     // Validate email
     if (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-        throw new Exception('Invalid email format');
+        throw new Exception($translator->get('error_invalid_email'));
     }
 
     // Check if email already exists
     if (User::where('email', $data->email)->exists()) {
-        throw new Exception('Email already registered');
+        throw new Exception($translator->get('error_email_registered'));
     }
 
     // Get client IP and create hash
@@ -42,7 +44,7 @@ try {
         ->first();
 
     if ($recentAttempt) {
-        throw new Exception('Please wait one hour between registration attempts');
+        throw new Exception($translator->get('error_registration_rate_limit'));
     }
 
     // Log the registration attempt
@@ -80,12 +82,12 @@ try {
     $mail->setFrom($config['email']['from_address'], $config['email']['from_name']);
     $mail->addAddress($user->email);
     $mail->isHTML(true);
-    $mail->Subject = 'Activate Your Account';
+    $mail->Subject = $translator->get('email_subject_activate');
     $mail->Body = "
-        <h2>Welcome to Marathon Training Tracker!</h2>
-        <p>Click the link below to activate your account:</p>
+        <h2>" . $translator->get('email_welcome') . "</h2>
+        <p>" . $translator->get('email_activation_instruction') . "</p>
         <p><a href='{$activationLink}'>{$activationLink}</a></p>
-        <p>If you didn't create this account, please ignore this email.</p>
+        <p>" . $translator->get('email_activation_disclaimer') . "</p>
     ";
 
     $mail->send();
@@ -96,7 +98,7 @@ try {
     
     echo json_encode([
         'success' => true,
-        'message' => 'Registration successful! Please check your email for activation instructions.'
+        'message' => $translator->get('message_activation_sent')
     ]);
 
 } catch (Exception $e) {

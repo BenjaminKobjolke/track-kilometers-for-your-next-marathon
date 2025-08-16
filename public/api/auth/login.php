@@ -4,8 +4,10 @@ require_once __DIR__ . '/../../../bootstrap.php';
 
 use Models\User;
 use Models\Logger;
+use Models\TranslationManager;
 
 $logger = new Logger('auth');
+$translator = new TranslationManager();
 
 header('Content-Type: application/json');
 
@@ -13,14 +15,14 @@ header('Content-Type: application/json');
 $dbPath = __DIR__ . '/../../../database/database.sqlite';
 if (!file_exists($dbPath)) {
     $logger->error('Database file does not exist', ['path' => $dbPath]);
-    throw new Exception('Database file not found');
+    throw new Exception($translator->get('error_database_not_found'));
 }
 if (!is_writable($dbPath)) {
     $logger->error('Database not writable', [
         'path' => $dbPath,
         'permissions' => decoct(fileperms($dbPath) & 0777)
     ]);
-    throw new Exception('Database file not writable');
+    throw new Exception($translator->get('error_database_not_writable'));
 }
 
 try {
@@ -39,12 +41,12 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input) {
-        throw new Exception('Invalid input data');
+        throw new Exception($translator->get('error_invalid_input'));
     }
 
     // Validate required fields
     if (!isset($input['email']) || !isset($input['password'])) {
-        throw new Exception('Missing required fields');
+        throw new Exception($translator->get('error_missing_fields'));
     }
 
     // Find user by email
@@ -59,12 +61,12 @@ try {
     }
     // Otherwise verify password
     else if (!$user || !password_verify($input['password'], $user->password)) {
-        throw new Exception('Invalid email or password');
+        throw new Exception($translator->get('error_invalid_credentials'));
     }
 
     // Check if account is activated
     if (!$user->isActive()) {
-        throw new Exception('Please activate your account. Check your email for activation instructions.');
+        throw new Exception($translator->get('error_account_not_activated'));
     }
 
     // Start session
@@ -95,6 +97,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error: ' . $e->getMessage()
+        'message' => $translator->get('error_login_failed', ['message' => $e->getMessage()])
     ]);
 }

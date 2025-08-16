@@ -1,3 +1,5 @@
+import translationManager from './TranslationManager.js';
+
 export default class RegisterManager {
     constructor() {
         this.form = document.getElementById('registerForm');
@@ -28,12 +30,12 @@ export default class RegisterManager {
 
     validateForm() {
         if (this.passwordInput.value !== this.confirmPasswordInput.value) {
-            this.showError('Passwords do not match');
+            this.showError(translationManager.translate('error_password_mismatch'));
             return false;
         }
 
         if (this.passwordInput.value.length < 8) {
-            this.showError('Password must be at least 8 characters long');
+            this.showError(translationManager.translate('error_password_too_short'));
             return false;
         }
 
@@ -62,7 +64,7 @@ export default class RegisterManager {
             const data = await response.json();
 
             if (!data.success) {
-                this.showError(data.error || 'Registration failed');
+                this.showError(data.error || translationManager.translate('error_registration_failed'));
                 return;
             }
 
@@ -70,7 +72,7 @@ export default class RegisterManager {
             this.form.reset();
 
         } catch (error) {
-            this.showError('An error occurred during registration');
+            this.showError(translationManager.translate('error_registration_generic'));
             console.error('Registration error:', error);
         }
     }

@@ -4,6 +4,9 @@ require_once '../../bootstrap.php';
 
 use Models\Settings;
 use Models\Logger;
+use Models\TranslationManager;
+
+$translator = new TranslationManager();
 
 session_start();
 header('Content-Type: application/json');
@@ -27,14 +30,21 @@ try {
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
             
-            if (!isset($data['theme'])) {
+            if (!isset($data['theme']) && !isset($data['language'])) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Theme is required']);
+                echo json_encode(['error' => $translator->get('error_invalid_input')]);
                 exit;
             }
 
             $settings = Settings::getDefault();
-            $settings->theme = $data['theme'];
+            
+            if (isset($data['theme'])) {
+                $settings->theme = $data['theme'];
+            }
+            
+            if (isset($data['language']) && in_array($data['language'], ['en', 'de'])) {
+                $settings->language = $data['language'];
+            }
             $settings->save();
 
             echo json_encode([
@@ -51,5 +61,5 @@ try {
 } catch (Exception $e) {
     $logger->error('Settings API Error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Internal server error']);
+    echo json_encode(['error' => $translator->get('error_generic', ['message' => $e->getMessage()])]);
 }

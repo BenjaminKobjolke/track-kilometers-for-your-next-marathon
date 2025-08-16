@@ -1,3 +1,5 @@
+import translationManager from './TranslationManager.js';
+
 export class UIManager {
     constructor() {
         this.runsTableBody = document.querySelector('tbody');
@@ -10,7 +12,7 @@ export class UIManager {
                 this.currentSessionInfo.innerHTML = '';
                 return;
             }
-            this.currentSessionInfo.innerHTML = `Session: ${session.name}`;
+            this.currentSessionInfo.innerHTML = translationManager.translate('label_session', { name: session.name });
         }
     }
 
@@ -26,12 +28,12 @@ export class UIManager {
                             data-id="${run.id}"
                             data-date="${run.formatted_date}"
                             data-km="${run.kilometers}">
-                        Edit
+                        ${translationManager.translate('button_edit')}
                     </button>
                     <button class="btn btn-sm btn-danger delete-run"
                             data-id="${run.id}"
                             data-date="${run.formatted_date}">
-                        Delete
+                        ${translationManager.translate('button_delete')}
                     </button>
                 </td>
             </tr>
@@ -55,7 +57,7 @@ export class UIManager {
             // Re-bind event handlers for the new buttons
             runManager.rebindEvents();
         } catch (error) {
-            console.error('Error updating UI:', error);
+            console.error(translationManager.translate('error_generic', { message: 'updating UI' }));
             this.updateRunsTable([]);
             statsManager.clearStats();
         }
