@@ -68,6 +68,7 @@ The application runs on a standard PHP web server (Apache/Nginx with PHP 8.1+). 
 ### Required Config Files
 1. **config.php**: Copy from `config_example.php` and set:
    - `base_url`: Application base URL path
+   - `database.path`: SQLite database file location (default: `data/database.sqlite`)
    - `email.from_address`: Sender email for password resets
    - `email.from_name`: Display name for emails
 
@@ -75,7 +76,7 @@ The application runs on a standard PHP web server (Apache/Nginx with PHP 8.1+). 
 
 ### Environment Setup
 - PHP 8.1+ with SQLite extension
-- Write permissions for `database/` directory
+- Write permissions for `data/` directory (database storage)
 - Write permissions for `logs/` directory
 - SMTP configuration for email features (password reset)
 

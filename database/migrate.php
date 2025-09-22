@@ -6,6 +6,9 @@ require_once __DIR__ . '/../bootstrap.php';
 $capsule->getConnection()->enableQueryLog();
 
 try {
+    // Show database path
+    echo "Database location: " . $dbPath . "\n\n";
+
     // Drop all existing tables first
     $capsule->schema()->dropIfExists('runs');
     $capsule->schema()->dropIfExists('settings');

@@ -6,9 +6,16 @@ composer.phar
 # composer.lock
 node_modules
 vendor
+
+# Runtime data (database, uploads, cache, etc.)
+data/*
+!data/.gitkeep
+
+# Legacy database location (kept for backward compatibility)
 database/database.sqlite
+database/_database.sqlite
+
 config.php
 logs
 .htaccess
-database/_database.sqlite
 .claude

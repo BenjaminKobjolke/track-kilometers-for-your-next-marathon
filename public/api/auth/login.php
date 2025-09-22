@@ -12,19 +12,7 @@ $translator = new TranslationManager();
 
 header('Content-Type: application/json');
 
-// Check database file permissions
-$dbPath = __DIR__ . '/../../../database/database.sqlite';
-if (!file_exists($dbPath)) {
-    $logger->error('Database file does not exist', ['path' => $dbPath]);
-    throw new Exception($translator->get('error_database_not_found'));
-}
-if (!is_writable($dbPath)) {
-    $logger->error('Database not writable', [
-        'path' => $dbPath,
-        'permissions' => decoct(fileperms($dbPath) & 0777)
-    ]);
-    throw new Exception($translator->get('error_database_not_writable'));
-}
+// Database checks are now handled by bootstrap.php
 
 try {
     // Test database connection

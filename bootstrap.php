@@ -41,8 +41,38 @@ spl_autoload_register(function ($class) {
 // Initialize logger
 $logger = new Logger();
 
-// Define database path
-$dbPath = __DIR__ . '/database/database.sqlite';
+// Load configuration
+if (!file_exists(__DIR__ . '/config.php')) {
+    throw new Exception('Configuration file not found. Please copy config_example.php to config.php and configure it.');
+}
+$config = require __DIR__ . '/config.php';
+
+// Define database path from config with fallback for backward compatibility
+$dbPath = $config['database']['path'] ?? __DIR__ . '/database/database.sqlite';
+
+// Migration: Check if old database exists and new one doesn't
+$oldDbPath = __DIR__ . '/database/database.sqlite';
+if (file_exists($oldDbPath) && !file_exists($dbPath)) {
+    $logger->info('Migrating database from old location to new location', [
+        'old_path' => $oldDbPath,
+        'new_path' => $dbPath
+    ]);
+
+    // Create data directory if it doesn't exist
+    $newDbDir = dirname($dbPath);
+    if (!file_exists($newDbDir)) {
+        if (!mkdir($newDbDir, 0777, true)) {
+            throw new Exception('Failed to create data directory for database migration');
+        }
+    }
+
+    // Copy database file
+    if (!copy($oldDbPath, $dbPath)) {
+        throw new Exception('Failed to migrate database to new location');
+    }
+
+    $logger->info('Database migration completed successfully');
+}
 
 // Check if database exists
 if (!file_exists($dbPath)) {

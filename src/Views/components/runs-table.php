@@ -3,6 +3,8 @@
  * @var Models\TranslationManager $translator
  * @var array $stats
  */
+
+use Utils\NumberFormatter;
 ?>
 <div class="table-responsive mt-4">
     <table class="table">
@@ -17,7 +19,7 @@
             <?php foreach ($stats['runs'] as $run): ?>
             <tr>
                 <td><?= $run->formatted_date ?></td>
-                <td><?= number_format($run->amount, 1) ?></td>
+                <td><?= NumberFormatter::format($run->amount, 1, $translator->getCurrentLanguage()) ?></td>
                 <td class="actions-cell text-end">
                     <button class="btn btn-sm btn-primary edit-run me-2" 
                             data-id="<?= $run->id ?>"

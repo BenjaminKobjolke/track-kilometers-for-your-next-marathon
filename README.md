@@ -58,7 +58,7 @@ composer install
    php database/migrate.php
    ```
 
-   This will create the SQLite database file at `database/database.sqlite` and set up all required tables.
+   This will create the SQLite database file at `data/database.sqlite` and set up all required tables.
 
 4. Configure the application:
    Create `config.php` (have a look at config_example.php) in the root directory:
@@ -67,6 +67,9 @@ composer install
    <?php
    return [
        'base_url' => '/track-kilometers-for-your-next-marathon/public',  // Update this for your environment
+       'database' => [
+           'path' => __DIR__ . '/data/database.sqlite'  // Database file location (outside git)
+       ],
        'email' => [
            'from_address' => 'your-email@domain.com',  // Email address for password reset emails
            'from_name' => 'Training Tracker'   // Name shown in emails
