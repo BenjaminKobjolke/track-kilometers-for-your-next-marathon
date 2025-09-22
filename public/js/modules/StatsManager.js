@@ -109,6 +109,19 @@ export class StatsManager {
         if (dailyAverageEl) dailyAverageEl.textContent = `daily average of ${(isNaN(averageKilometers) ? 0 : averageKilometers).toFixed(1)} ${unitShort}`;
         if (estimatedTotalEl) estimatedTotalEl.textContent = `${(isNaN(estimatedTotal) ? 0 : estimatedTotal).toFixed(1)} ${unitShort}`;
         if (remainingDaysEl) remainingDaysEl.textContent = `${remainingDays} days`;
+
+        // Update date range subtext
+        const dateRangeEl = document.querySelector('.card:nth-child(3) .card-subtext');
+        if (dateRangeEl && session.start_date && session.end_date) {
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            };
+            const startDateFormatted = formatDate(session.start_date);
+            const endDateFormatted = formatDate(session.end_date);
+            // Use English format for now - we'd need translation manager here for proper i18n
+            dateRangeEl.textContent = `From ${startDateFormatted} until ${endDateFormatted}`;
+        }
         if (targetInfoEl) targetInfoEl.textContent = `Target of ${session.target_kilometers.toFixed(1)} ${unitShort}`;
         if (targetProbabilityEl) targetProbabilityEl.textContent = `${(isNaN(probability) ? 0 : probability).toFixed(1)}%`;
     }

@@ -47,7 +47,10 @@ use Models\DateFormatter;
                     <div class="card-info flex-grow-1 pe-3">
                         <h5 class="card-title"><?= $translator->get('stats_remaining_days') ?></h5>
                         <?php if ($activeSession): ?>
-                        <p class="card-subtext"><?= $translator->get('stats_until', ['date' => DateFormatter::isoToGermanDate($activeSession->end_date)]) ?></p>
+                        <p class="card-subtext"><?= $translator->get('stats_date_range', [
+                            'start_date' => DateFormatter::isoToGermanDate($activeSession->start_date),
+                            'end_date' => DateFormatter::isoToGermanDate($activeSession->end_date)
+                        ]) ?></p>
                         <?php endif; ?>
                     </div>
                     <div class="card-value text-end">

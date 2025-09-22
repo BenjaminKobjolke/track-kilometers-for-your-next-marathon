@@ -127,6 +127,7 @@
   "stats_remaining_days": "Verbleibende Tage",
   "stats_until": "bis {date}",
   "stats_days": "{count} Tage",
+  "stats_date_range": "Vom {start_date} bis {end_date}",
   "stats_target_probability": "Zielwahrscheinlichkeit",
   "stats_target_of": "Ziel von {amount} {unit_short}",
   "table_header_date": "Datum",

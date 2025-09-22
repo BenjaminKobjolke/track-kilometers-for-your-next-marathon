@@ -11,3 +11,4 @@ config.php
 logs
 .htaccess
 database/_database.sqlite
+.claude

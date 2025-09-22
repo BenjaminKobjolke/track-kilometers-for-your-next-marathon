@@ -148,6 +148,7 @@
   "stats_remaining_days": "Remaining Days",
   "stats_until": "until {date}",
   "stats_days": "{count} days",
+  "stats_date_range": "From {start_date} until {end_date}",
   "stats_target_probability": "Target Probability",
   "stats_target_of": "Target of {amount} {unit_short}",
 
