@@ -61,7 +61,15 @@ export class StatsManager {
         const estimatedTotal = averageKilometers * totalSessionDays;
         
         // Calculate remaining days
-        const remainingDays = Math.max(0, Math.ceil((endDate - now) / (1000 * 60 * 60 * 24)));
+        let remainingDays;
+        if (now < startDate) {
+            // Session hasn't started yet - show total session duration
+            remainingDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        } else {
+            // Session is active or past - show remaining days from now
+            remainingDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+        }
+        remainingDays = Math.max(0, remainingDays);
         
         // Calculate probability based on estimated total and current progress
         const currentProgress = session.target_kilometers > 0 ? (totalKilometers / session.target_kilometers) * 100 : 0;

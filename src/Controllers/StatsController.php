@@ -29,7 +29,17 @@ class StatsController {
         $estimatedTotal = $averageKilometers * $totalDays;
         
         // Calculate remaining days
-        $remainingDays = ceil((strtotime($session->end_date) - time()) / (60 * 60 * 24));
+        $now = time();
+        $startTime = strtotime($session->start_date);
+        $endTime = strtotime($session->end_date);
+
+        if ($now < $startTime) {
+            // Session hasn't started yet - show days until session starts
+            $remainingDays = ceil(($endTime - $startTime) / (60 * 60 * 24));
+        } else {
+            // Session is active or past - show remaining days from now
+            $remainingDays = ceil(($endTime - $now) / (60 * 60 * 24));
+        }
         $remainingDays = max(0, $remainingDays);
         
         // Calculate probability based on estimated total and current progress
