@@ -1,12 +1,14 @@
 import { DateFormatter } from './DateFormatter.js';
 import probabilityManager from './ProbabilityManager.js';
 import translationManager from './TranslationManager.js';
+import numberFormatter from './NumberFormatter.js';
 
 export class StatsManager {
     constructor() {
         this.cards = document.querySelectorAll('.card');
         this.initializeEventListeners();
     }
+
 
     initializeEventListeners() {
         // Add click handler for probability card
@@ -106,12 +108,12 @@ export class StatsManager {
         const targetInfoEl = document.getElementById('target-info');
         const targetProbabilityEl = document.getElementById('target-probability');
         
-        if (totalAmountEl) totalAmountEl.textContent = `${(isNaN(totalKilometers) ? 0 : totalKilometers).toFixed(1)} ${unitShort}`;
+        if (totalAmountEl) totalAmountEl.textContent = `${numberFormatter.format(totalKilometers)} ${unitShort}`;
         if (dailyAverageEl) dailyAverageEl.textContent = translationManager.translate('stats_daily_average', {
-            amount: (isNaN(averageKilometers) ? 0 : averageKilometers).toFixed(1),
+            amount: numberFormatter.format(averageKilometers),
             unit_short: unitShort
         });
-        if (estimatedTotalEl) estimatedTotalEl.textContent = `${(isNaN(estimatedTotal) ? 0 : estimatedTotal).toFixed(1)} ${unitShort}`;
+        if (estimatedTotalEl) estimatedTotalEl.textContent = `${numberFormatter.format(estimatedTotal)} ${unitShort}`;
         if (remainingDaysEl) remainingDaysEl.textContent = translationManager.translate('stats_days', {
             count: remainingDays
         });
@@ -131,10 +133,10 @@ export class StatsManager {
             });
         }
         if (targetInfoEl) targetInfoEl.textContent = translationManager.translate('stats_target_of', {
-            amount: session.target_kilometers.toFixed(1),
+            amount: numberFormatter.format(session.target_kilometers),
             unit_short: unitShort
         });
-        if (targetProbabilityEl) targetProbabilityEl.textContent = `${(isNaN(probability) ? 0 : probability).toFixed(1)}%`;
+        if (targetProbabilityEl) targetProbabilityEl.textContent = `${numberFormatter.format(probability)}%`;
     }
 
     clearStats() {

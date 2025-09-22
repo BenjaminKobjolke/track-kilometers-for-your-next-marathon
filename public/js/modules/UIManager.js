@@ -1,4 +1,5 @@
 import translationManager from './TranslationManager.js';
+import numberFormatter from './NumberFormatter.js';
 
 export class UIManager {
     constructor() {
@@ -39,7 +40,7 @@ export class UIManager {
         this.runsTableBody.innerHTML = runs.map(run => `
             <tr>
                 <td>${run.formatted_date}</td>
-                <td>${Number(run.amount || run.kilometers).toFixed(1)}</td>
+                <td>${numberFormatter.format(run.amount || run.kilometers)}</td>
                 <td class="actions-cell text-end">
                     <button class="btn btn-sm btn-primary edit-run me-2" 
                             data-id="${run.id}"
