@@ -1,5 +1,6 @@
 import { DateFormatter } from './DateFormatter.js';
 import probabilityManager from './ProbabilityManager.js';
+import translationManager from './TranslationManager.js';
 
 export class StatsManager {
     constructor() {
@@ -106,9 +107,14 @@ export class StatsManager {
         const targetProbabilityEl = document.getElementById('target-probability');
         
         if (totalAmountEl) totalAmountEl.textContent = `${(isNaN(totalKilometers) ? 0 : totalKilometers).toFixed(1)} ${unitShort}`;
-        if (dailyAverageEl) dailyAverageEl.textContent = `daily average of ${(isNaN(averageKilometers) ? 0 : averageKilometers).toFixed(1)} ${unitShort}`;
+        if (dailyAverageEl) dailyAverageEl.textContent = translationManager.translate('stats_daily_average', {
+            amount: (isNaN(averageKilometers) ? 0 : averageKilometers).toFixed(1),
+            unit_short: unitShort
+        });
         if (estimatedTotalEl) estimatedTotalEl.textContent = `${(isNaN(estimatedTotal) ? 0 : estimatedTotal).toFixed(1)} ${unitShort}`;
-        if (remainingDaysEl) remainingDaysEl.textContent = `${remainingDays} days`;
+        if (remainingDaysEl) remainingDaysEl.textContent = translationManager.translate('stats_days', {
+            count: remainingDays
+        });
 
         // Update date range subtext
         const dateRangeEl = document.querySelector('.card:nth-child(3) .card-subtext');
@@ -119,10 +125,15 @@ export class StatsManager {
             };
             const startDateFormatted = formatDate(session.start_date);
             const endDateFormatted = formatDate(session.end_date);
-            // Use English format for now - we'd need translation manager here for proper i18n
-            dateRangeEl.textContent = `From ${startDateFormatted} until ${endDateFormatted}`;
+            dateRangeEl.textContent = translationManager.translate('stats_date_range', {
+                start_date: startDateFormatted,
+                end_date: endDateFormatted
+            });
         }
-        if (targetInfoEl) targetInfoEl.textContent = `Target of ${session.target_kilometers.toFixed(1)} ${unitShort}`;
+        if (targetInfoEl) targetInfoEl.textContent = translationManager.translate('stats_target_of', {
+            amount: session.target_kilometers.toFixed(1),
+            unit_short: unitShort
+        });
         if (targetProbabilityEl) targetProbabilityEl.textContent = `${(isNaN(probability) ? 0 : probability).toFixed(1)}%`;
     }
 
