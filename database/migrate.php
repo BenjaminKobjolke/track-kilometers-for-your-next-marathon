@@ -5,15 +5,23 @@ require_once __DIR__ . '/../bootstrap.php';
 // Enable query logging
 $capsule->getConnection()->enableQueryLog();
 
+// Check for command-line arguments
+$forceReset = isset($argv[1]) && $argv[1] === '--reset';
+
 try {
     // Show database path
     echo "Database location: " . $dbPath . "\n\n";
 
-    // Drop all existing tables first
-    $capsule->schema()->dropIfExists('runs');
-    $capsule->schema()->dropIfExists('settings');
-    $capsule->schema()->dropIfExists('users');
-    $capsule->schema()->dropIfExists('sessions');
+    // Only drop tables if --reset flag is provided
+    if ($forceReset) {
+        echo "Resetting database (--reset flag provided)...\n";
+        $capsule->schema()->dropIfExists('register_log');
+        $capsule->schema()->dropIfExists('runs');
+        $capsule->schema()->dropIfExists('sessions');
+        $capsule->schema()->dropIfExists('settings');
+        $capsule->schema()->dropIfExists('users');
+        echo "\n";
+    }
 
     // Get all migration files
     $migrations = glob(__DIR__ . '/migrations/*.php');

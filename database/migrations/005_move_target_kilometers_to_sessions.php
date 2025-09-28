@@ -4,16 +4,20 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 return [
     'up' => function () {
-        // Add target_kilometers to sessions table
-        Capsule::schema()->table('sessions', function ($table) {
-            $table->decimal('target_kilometers', 8, 1)->default(500);
-        });
+        // Add target_kilometers to sessions table if it doesn't exist
+        if (!Capsule::schema()->hasColumn('sessions', 'target_kilometers')) {
+            Capsule::schema()->table('sessions', function ($table) {
+                $table->decimal('target_kilometers', 8, 1)->default(500);
+            });
 
-        // Copy default target_kilometers from settings to existing sessions
-        $defaultSettings = Capsule::table('settings')->first();
-        if ($defaultSettings) {
-            $defaultTarget = $defaultSettings->target_kilometers;
-            Capsule::table('sessions')->update(['target_kilometers' => $defaultTarget]);
+            // Copy default target_kilometers from settings to existing sessions
+            if (Capsule::schema()->hasColumn('settings', 'target_kilometers')) {
+                $defaultSettings = Capsule::table('settings')->first();
+                if ($defaultSettings && isset($defaultSettings->target_kilometers)) {
+                    $defaultTarget = $defaultSettings->target_kilometers;
+                    Capsule::table('sessions')->update(['target_kilometers' => $defaultTarget]);
+                }
+            }
         }
 
         // Remove target_kilometers from settings table if it exists
