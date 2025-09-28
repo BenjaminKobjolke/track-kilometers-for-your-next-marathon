@@ -2,36 +2,53 @@
 
 require_once __DIR__ . '/../bootstrap.php';
 
+// Detect if running from web or CLI
+$isWeb = php_sapi_name() !== 'cli';
+
+// Format output based on context
+function outputLine($message, $type = 'info') {
+    global $isWeb;
+
+    if ($isWeb) {
+        // For web context, we'll capture this in ob_start()
+        echo htmlspecialchars($message) . "\n";
+    } else {
+        // For CLI context
+        echo $message . "\n";
+    }
+}
+
 // Enable query logging
 $capsule->getConnection()->enableQueryLog();
 
-// Check for command-line arguments
-$forceReset = isset($argv[1]) && $argv[1] === '--reset';
+// Check for command-line arguments (CLI only)
+$forceReset = !$isWeb && isset($argv[1]) && $argv[1] === '--reset';
 
 try {
     // Show database path
-    echo "Database location: " . $dbPath . "\n\n";
+    outputLine("Database location: " . $dbPath);
+    outputLine("");
 
     // Only drop tables if --reset flag is provided
     if ($forceReset) {
-        echo "Resetting database (--reset flag provided)...\n";
+        outputLine("Resetting database (--reset flag provided)...");
         $capsule->schema()->dropIfExists('register_log');
         $capsule->schema()->dropIfExists('runs');
         $capsule->schema()->dropIfExists('sessions');
         $capsule->schema()->dropIfExists('settings');
         $capsule->schema()->dropIfExists('users');
-        echo "\n";
+        outputLine("");
     }
 
     // Get all migration files
     $migrations = glob(__DIR__ . '/migrations/*.php');
     sort($migrations); // Sort to ensure they run in order
 
-    echo "Running migrations:\n";
+    outputLine("Running migrations:");
     foreach ($migrations as $migration) {
-        echo "- Running " . basename($migration) . "\n";
+        outputLine("- Running " . basename($migration));
         $migrationData = require $migration;
-        
+
         if (isset($migrationData['up']) && is_callable($migrationData['up'])) {
             $migrationData['up']();
         } else {
@@ -42,13 +59,18 @@ try {
 
     // Output executed queries
     $queries = $capsule->getConnection()->getQueryLog();
-    echo "\nExecuted queries:\n";
+    outputLine("");
+    outputLine("Executed queries:");
     foreach ($queries as $query) {
-        echo "- " . $query['query'] . "\n";
+        outputLine("- " . $query['query']);
     }
 
-    echo "\nMigration completed successfully!\n";
+    outputLine("");
+    outputLine("Migration completed successfully!", 'success');
 } catch (Exception $e) {
-    echo "Migration failed: " . $e->getMessage() . "\n";
-    echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
+    outputLine("Migration failed: " . $e->getMessage(), 'error');
+    if (!$isWeb) {
+        outputLine("Stack trace:");
+        outputLine($e->getTraceAsString());
+    }
 }
