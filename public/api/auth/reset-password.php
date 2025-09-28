@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../bootstrap.php';
-$config = require_once __DIR__ . '/../../../config.php';
+$config = require __DIR__ . '/../../../config.php';
 
 use Models\User;
 use Models\Logger;

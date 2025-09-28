@@ -63,7 +63,7 @@ try {
     $user->save();
 
     // Get config
-    $config = require_once __DIR__ . '/../../../config.php';
+    $config = require __DIR__ . '/../../../config.php';
 
     // Create activation link
     $activationLink = sprintf(
