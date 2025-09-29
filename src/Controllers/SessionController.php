@@ -19,7 +19,9 @@ class SessionController {
 
     private function checkAuth() {
         if (!$this->userId) {
-            throw new \Exception('User not authenticated');
+            // Instead of throwing an exception, redirect to login
+            header('Location: login.php');
+            exit;
         }
     }
 

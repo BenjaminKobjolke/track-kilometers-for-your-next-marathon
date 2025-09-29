@@ -13,6 +13,8 @@ class StatsController {
                 'averageKilometers' => 0,
                 'estimatedTotal' => 0,
                 'remainingDays' => 0,
+                'trainingDays' => 0,
+                'elapsedDays' => 0,
                 'probability' => 0
             ];
         }
@@ -41,6 +43,18 @@ class StatsController {
             $remainingDays = ceil(($endTime - $now) / (60 * 60 * 24));
         }
         $remainingDays = max(0, $remainingDays);
+
+        // Calculate total training period in days
+        $trainingDays = ceil(($endTime - $startTime) / (60 * 60 * 24)) + 1;
+
+        // Calculate elapsed days (from start to today, or full period if ended)
+        if ($now < $startTime) {
+            $elapsedDays = 0;
+        } elseif ($now > $endTime) {
+            $elapsedDays = $trainingDays;
+        } else {
+            $elapsedDays = ceil(($now - $startTime) / (60 * 60 * 24)) + 1;
+        }
         
         // Calculate probability based on estimated total and current progress
         $currentProgress = $session->target_kilometers > 0 ? ($totalKilometers / $session->target_kilometers) * 100 : 0;
@@ -55,6 +69,8 @@ class StatsController {
             'averageKilometers' => $averageKilometers,
             'estimatedTotal' => $estimatedTotal,
             'remainingDays' => $remainingDays,
+            'trainingDays' => $trainingDays,
+            'elapsedDays' => $elapsedDays,
             'probability' => $probability
         ];
     }

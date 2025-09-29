@@ -151,6 +151,8 @@
   "stats_date_range": "From {start_date} until {end_date}",
   "stats_target_probability": "Target Probability",
   "stats_target_of": "Target of {amount} {unit_short}",
+  "stats_training_period": "Training Period",
+  "stats_day_of": "Day {current} of {total}",
 
   "table_header_date": "Date",
   "table_header_amount": "{unit}",

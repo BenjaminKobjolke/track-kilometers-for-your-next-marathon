@@ -1,13 +1,27 @@
 <?php
+// Start session with specific namespace to avoid conflicts
 session_start();
 $config = require __DIR__ . '/../config.php';
 
-// Check if already authenticated
+// Use a separate session variable for migration tool to avoid conflicts with main app
 $isAuthenticated = isset($_SESSION['migration_auth']) && $_SESSION['migration_auth'] === true;
+
+// Check if session has expired (30 minutes timeout)
+if ($isAuthenticated && isset($_SESSION['migration_auth_time'])) {
+    if (time() - $_SESSION['migration_auth_time'] > 1800) { // 30 minutes
+        unset($_SESSION['migration_auth']);
+        unset($_SESSION['migration_auth_time']);
+        $isAuthenticated = false;
+        $error = 'Session expired. Please login again.';
+    } else {
+        $_SESSION['migration_auth_time'] = time(); // Update activity time
+    }
+}
 
 // Handle logout
 if (isset($_GET['logout'])) {
     unset($_SESSION['migration_auth']);
+    unset($_SESSION['migration_auth_time']);
     header('Location: migrate.php');
     exit;
 }
@@ -16,6 +30,7 @@ if (isset($_GET['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     if ($_POST['password'] === $config['migration']['password']) {
         $_SESSION['migration_auth'] = true;
+        $_SESSION['migration_auth_time'] = time(); // Set initial auth time
         header('Location: migrate.php');
         exit;
     } else {

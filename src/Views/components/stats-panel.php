@@ -9,7 +9,7 @@ use Models\DateFormatter;
 use Utils\NumberFormatter;
 ?>
 <div class="row mt-4">
-    <div class="col-md-3">
+    <div class="col mb-3">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -26,7 +26,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col mb-3">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -41,7 +41,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col mb-3">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -61,7 +61,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col mb-3">
         <div class="card probability-card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -71,6 +71,21 @@ use Utils\NumberFormatter;
                     </div>
                     <div class="card-value text-end">
                         <p class="card-text" id="target-probability"><?= NumberFormatter::format(is_nan($stats['probability']) ? 0 : $stats['probability'], 1, $translator->getCurrentLanguage()) ?>%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col mb-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="card-info flex-grow-1 pe-3">
+                        <h5 class="card-title"><?= $translator->get('stats_training_period') ?></h5>
+                        <p class="card-subtext" id="elapsed-days"><?= $translator->get('stats_day_of', ['current' => $stats['elapsedDays'], 'total' => $stats['trainingDays']]) ?></p>
+                    </div>
+                    <div class="card-value text-end">
+                        <p class="card-text" id="training-days"><?= $translator->get('stats_days', ['count' => $stats['trainingDays']]) ?></p>
                     </div>
                 </div>
             </div>

@@ -130,6 +130,8 @@
   "stats_date_range": "Vom {start_date} bis {end_date}",
   "stats_target_probability": "Zielwahrscheinlichkeit",
   "stats_target_of": "Ziel von {amount} {unit_short}",
+  "stats_training_period": "Trainingszeitraum",
+  "stats_day_of": "Tag {current} von {total}",
   "table_header_date": "Datum",
   "table_header_amount": "{unit}",
   "table_header_actions": "Aktionen",

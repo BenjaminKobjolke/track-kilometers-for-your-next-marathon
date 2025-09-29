@@ -11,19 +11,19 @@ export class StatsManager {
 
 
     initializeEventListeners() {
-        // Add click handler for probability card
-        const probabilityCard = this.cards[3];
+        // Add click handler for probability card (identified by class)
+        const probabilityCard = document.querySelector('.probability-card');
         if (probabilityCard) {
             probabilityCard.addEventListener('click', () => this.showProbabilityInfo());
         }
     }
 
     showProbabilityInfo() {
-        // Get the current values from the cards
-        const currentKm = parseFloat(this.cards[0].querySelector('.card-text').textContent);
-        const estimatedKm = parseFloat(this.cards[1].querySelector('.card-text').textContent);
-        const targetKm = parseFloat(this.cards[3].querySelector('.card-subtext').textContent.match(/\d+(\.\d+)?/)[0]);
-        const probability = parseFloat(this.cards[3].querySelector('.card-text').textContent);
+        // Get the current values from the cards using IDs for accuracy
+        const currentKm = parseFloat(document.getElementById('total-amount').textContent);
+        const estimatedKm = parseFloat(document.getElementById('estimated-total').textContent);
+        const targetKm = parseFloat(document.getElementById('target-info').textContent.match(/\d+(\.\d+)?/)[0]);
+        const probability = parseFloat(document.getElementById('target-probability').textContent);
 
         // Calculate percentages
         const currentProgress = (currentKm / targetKm) * 100;
@@ -73,6 +73,17 @@ export class StatsManager {
             remainingDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
         }
         remainingDays = Math.max(0, remainingDays);
+
+        // Calculate training period stats
+        const trainingDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        let elapsedDays;
+        if (now < startDate) {
+            elapsedDays = 0;
+        } else if (now > endDate) {
+            elapsedDays = trainingDays;
+        } else {
+            elapsedDays = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        }
         
         // Calculate probability based on estimated total and current progress
         const currentProgress = session.target_kilometers > 0 ? (totalKilometers / session.target_kilometers) * 100 : 0;
@@ -107,6 +118,8 @@ export class StatsManager {
         const remainingDaysEl = document.getElementById('remaining-days');
         const targetInfoEl = document.getElementById('target-info');
         const targetProbabilityEl = document.getElementById('target-probability');
+        const trainingDaysEl = document.getElementById('training-days');
+        const elapsedDaysEl = document.getElementById('elapsed-days');
         
         if (totalAmountEl) totalAmountEl.textContent = `${numberFormatter.format(totalKilometers)} ${unitShort}`;
         if (dailyAverageEl) dailyAverageEl.textContent = translationManager.translate('stats_daily_average', {
@@ -137,6 +150,15 @@ export class StatsManager {
             unit_short: unitShort
         });
         if (targetProbabilityEl) targetProbabilityEl.textContent = `${numberFormatter.format(probability)}%`;
+
+        // Update training period stats
+        if (trainingDaysEl) trainingDaysEl.textContent = translationManager.translate('stats_days', {
+            count: trainingDays
+        });
+        if (elapsedDaysEl) elapsedDaysEl.textContent = translationManager.translate('stats_day_of', {
+            current: elapsedDays,
+            total: trainingDays
+        });
     }
 
     clearStats() {
