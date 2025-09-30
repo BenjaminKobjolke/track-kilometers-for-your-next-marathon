@@ -153,6 +153,9 @@
   "stats_target_of": "Target of {amount} {unit_short}",
   "stats_training_period": "Training Period",
   "stats_day_of": "Day {current} of {total}",
+  "stats_training_status": "Day {current} of {total} • {remaining} days remaining",
+  "stats_day_progress": "Day {current} of {total}",
+  "stats_remaining_days_info": "{count} days remaining",
 
   "table_header_date": "Date",
   "table_header_amount": "{unit}",

@@ -51,15 +51,12 @@ export class StatsManager {
         const endDate = new Date(session.end_date);
         const now = new Date();
 
-        // Calculate days since start (for average)
-        const daysSinceStart = Math.ceil((Math.min(now, endDate) - startDate) / (1000 * 60 * 60 * 24)) + 1;
-        
-        // Calculate total session days (for estimated total)
+        // Calculate total session days
         const totalSessionDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-        
-        // Calculate daily average based on days since start
-        const averageKilometers = daysSinceStart > 0 ? totalKilometers / daysSinceStart : 0;
-        
+
+        // Calculate daily average based on total session days (matching PHP calculation)
+        const averageKilometers = totalSessionDays > 0 ? totalKilometers / totalSessionDays : 0;
+
         // Calculate estimated total based on current average
         const estimatedTotal = averageKilometers * totalSessionDays;
         
@@ -115,11 +112,11 @@ export class StatsManager {
         const totalAmountEl = document.getElementById('total-amount');
         const dailyAverageEl = document.getElementById('daily-average');
         const estimatedTotalEl = document.getElementById('estimated-total');
-        const remainingDaysEl = document.getElementById('remaining-days');
         const targetInfoEl = document.getElementById('target-info');
         const targetProbabilityEl = document.getElementById('target-probability');
-        const trainingDaysEl = document.getElementById('training-days');
-        const elapsedDaysEl = document.getElementById('elapsed-days');
+        const dateRangeEl = document.getElementById('date-range');
+        const dayProgressEl = document.getElementById('day-progress');
+        const remainingInfoEl = document.getElementById('remaining-info');
         
         if (totalAmountEl) totalAmountEl.textContent = `${numberFormatter.format(totalKilometers)} ${unitShort}`;
         if (dailyAverageEl) dailyAverageEl.textContent = translationManager.translate('stats_daily_average', {
@@ -127,12 +124,14 @@ export class StatsManager {
             unit_short: unitShort
         });
         if (estimatedTotalEl) estimatedTotalEl.textContent = `${numberFormatter.format(estimatedTotal)} ${unitShort}`;
-        if (remainingDaysEl) remainingDaysEl.textContent = translationManager.translate('stats_days', {
-            count: remainingDays
-        });
 
-        // Update date range subtext
-        const dateRangeEl = document.querySelector('.card:nth-child(3) .card-subtext');
+        if (targetInfoEl) targetInfoEl.textContent = translationManager.translate('stats_target_of', {
+            amount: numberFormatter.format(session.target_kilometers),
+            unit_short: unitShort
+        });
+        if (targetProbabilityEl) targetProbabilityEl.textContent = `${numberFormatter.format(probability)}%`;
+
+        // Update training period components
         if (dateRangeEl && session.start_date && session.end_date) {
             const formatDate = (dateStr) => {
                 const date = new Date(dateStr);
@@ -140,25 +139,21 @@ export class StatsManager {
             };
             const startDateFormatted = formatDate(session.start_date);
             const endDateFormatted = formatDate(session.end_date);
-            dateRangeEl.textContent = translationManager.translate('stats_date_range', {
-                start_date: startDateFormatted,
-                end_date: endDateFormatted
+            dateRangeEl.textContent = `${startDateFormatted} - ${endDateFormatted}`;
+        }
+
+        if (dayProgressEl) {
+            dayProgressEl.textContent = translationManager.translate('stats_day_progress', {
+                current: elapsedDays,
+                total: trainingDays
             });
         }
-        if (targetInfoEl) targetInfoEl.textContent = translationManager.translate('stats_target_of', {
-            amount: numberFormatter.format(session.target_kilometers),
-            unit_short: unitShort
-        });
-        if (targetProbabilityEl) targetProbabilityEl.textContent = `${numberFormatter.format(probability)}%`;
 
-        // Update training period stats
-        if (trainingDaysEl) trainingDaysEl.textContent = translationManager.translate('stats_days', {
-            count: trainingDays
-        });
-        if (elapsedDaysEl) elapsedDaysEl.textContent = translationManager.translate('stats_day_of', {
-            current: elapsedDays,
-            total: trainingDays
-        });
+        if (remainingInfoEl) {
+            remainingInfoEl.textContent = translationManager.translate('stats_remaining_days_info', {
+                count: remainingDays
+            });
+        }
     }
 
     clearStats() {
