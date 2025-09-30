@@ -46,10 +46,15 @@ export class RunManager {
             });
         }
 
-        // Remove modal show event listener
+        // Remove modal event listeners
         const modal = document.getElementById('addRunModal');
-        if (modal && this.boundEventHandlers.has('modalShow')) {
-            modal.removeEventListener('show.bs.modal', this.boundEventHandlers.get('modalShow'));
+        if (modal) {
+            if (this.boundEventHandlers.has('modalShow')) {
+                modal.removeEventListener('show.bs.modal', this.boundEventHandlers.get('modalShow'));
+            }
+            if (this.boundEventHandlers.has('modalHide')) {
+                modal.removeEventListener('hidden.bs.modal', this.boundEventHandlers.get('modalHide'));
+            }
         }
 
         // Remove date input listener
@@ -94,17 +99,30 @@ export class RunManager {
         // Reset form when adding new run - use Bootstrap modal event for reliability
         const modal = document.getElementById('addRunModal');
         if (modal) {
-            const handler = (event) => {
-                // Only reset for new entries (not when editing)
+            const showHandler = (event) => {
+                // Check if we already have a runId set (means it's an edit)
                 const runId = document.getElementById('runId').value;
+
                 if (!runId) {
+                    // This is a new entry - reset form and set current date
                     console.log('Modal opened for new entry, resetting form and setting default date');
                     this.resetForm();
                     this.setDefaultDate();
                 }
+                // If runId exists, it's an edit - data is already set by editRun()
             };
-            this.boundEventHandlers.set('modalShow', handler);
-            modal.addEventListener('show.bs.modal', handler);
+            this.boundEventHandlers.set('modalShow', showHandler);
+            modal.addEventListener('show.bs.modal', showHandler);
+
+            // Clear form when modal is hidden to ensure clean state for next use
+            const hideHandler = () => {
+                // Clear the form after modal is fully hidden
+                setTimeout(() => {
+                    this.resetForm();
+                }, 100);
+            };
+            this.boundEventHandlers.set('modalHide', hideHandler);
+            modal.addEventListener('hidden.bs.modal', hideHandler);
         }
 
         // Add date validation
@@ -212,11 +230,15 @@ export class RunManager {
 
     editRun(event) {
         const button = event.currentTarget;
-        const modal = new bootstrap.Modal(document.getElementById('addRunModal'));
+        // Set form data BEFORE opening modal
+        // This ensures the data is there when the show.bs.modal event fires
         document.getElementById('runId').value = button.dataset.id;
         document.getElementById('runDate').value = button.dataset.date;
         document.getElementById('amount').value = button.dataset.amount;
         document.querySelector('#addRunModal .modal-title').textContent = translationManager.translate('modal_title_edit_run');
+
+        // Now show the modal - the show handler will see runId is set and won't reset
+        const modal = new bootstrap.Modal(document.getElementById('addRunModal'));
         modal.show();
     }
 
