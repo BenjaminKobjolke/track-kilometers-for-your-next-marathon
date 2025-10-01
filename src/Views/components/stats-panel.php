@@ -9,7 +9,7 @@ use Models\DateFormatter;
 use Utils\NumberFormatter;
 ?>
 <div class="row mt-4">
-    <div class="col mb-3">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -26,7 +26,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col mb-3">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -41,7 +41,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col mb-3">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
         <div class="card probability-card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -56,7 +56,7 @@ use Utils\NumberFormatter;
             </div>
         </div>
     </div>
-    <div class="col mb-3">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title"><?= $translator->get('stats_training_period') ?></h5>

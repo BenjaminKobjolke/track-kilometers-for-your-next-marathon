@@ -54,8 +54,18 @@ export class StatsManager {
         // Calculate total session days
         const totalSessionDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-        // Calculate daily average based on total session days (matching PHP calculation)
-        const averageKilometers = totalSessionDays > 0 ? totalKilometers / totalSessionDays : 0;
+        // Calculate elapsed days for daily average
+        let elapsedDaysForAverage;
+        if (now < startDate) {
+            elapsedDaysForAverage = 0;
+        } else if (now > endDate) {
+            elapsedDaysForAverage = totalSessionDays;
+        } else {
+            elapsedDaysForAverage = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        // Calculate daily average based on elapsed days (not total session days)
+        const averageKilometers = elapsedDaysForAverage > 0 ? totalKilometers / elapsedDaysForAverage : 0;
 
         // Calculate estimated total based on current average
         const estimatedTotal = averageKilometers * totalSessionDays;
