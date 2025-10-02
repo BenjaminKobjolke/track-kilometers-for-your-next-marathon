@@ -42,15 +42,18 @@ async function initializeApp() {
                 try {
                     let session;
                     if (sessionId) {
-                        // Edit existing session
-                        session = await sessionManager.updateSession(sessionId, {
-                            name: name,
-                            start_date: startDate,
-                            end_date: endDate,
-                            target_kilometers: parseFloat(targetKm),
-                            unit: unit,
-                            unit_short: unitShort
-                        });
+                        // Edit existing session - only send changed fields
+                        const activeSession = await sessionManager.getActiveSession();
+                        const updateData = {};
+
+                        if (name !== activeSession.name) updateData.name = name;
+                        if (startDate !== DateFormatter.isoToGermanDate(activeSession.start_date)) updateData.start_date = startDate;
+                        if (endDate !== DateFormatter.isoToGermanDate(activeSession.end_date)) updateData.end_date = endDate;
+                        if (parseFloat(targetKm) !== parseFloat(activeSession.target_kilometers)) updateData.target_kilometers = parseFloat(targetKm);
+                        if (unit !== activeSession.unit) updateData.unit = unit;
+                        if (unitShort !== activeSession.unit_short) updateData.unit_short = unitShort;
+
+                        session = await sessionManager.updateSession(sessionId, updateData);
                     } else {
                         // Create new session
                         session = await sessionManager.createSession(name, startDate, endDate, parseFloat(targetKm), unit, unitShort);
